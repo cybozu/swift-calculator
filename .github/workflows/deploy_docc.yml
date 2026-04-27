@@ -23,12 +23,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Check Env
-        run: |
-          xcodebuild -version
-          xcodebuild -list
-          xcrun xctrace list devices 2>&1 | grep -v Apple
-
       - name: Build DocC
         run: |
           xcodebuild docbuild \
