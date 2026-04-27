@@ -48,7 +48,7 @@ jobs:
       id-token: write
     environment:
       name: github-pages
-      url: "https://cybozu.github.io/swift-calculator/documentation/calculatorui"
+      url: "https://cybozu.github.io/swift-calculator/documentation/calculatorui/"
 
     steps:
       - name: Deploy to GitHub Pages
