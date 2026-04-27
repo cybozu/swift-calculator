@@ -24,12 +24,13 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Build DocC
+        shell: bash
         run: |
           xcodebuild docbuild \
             -scheme swift-calculator \
             -destination "generic/platform=iOS" \
             -derivedDataPath DerivedData | \
-            xcbeautify && exit ${PIPESTATUS[0]}
+            xcbeautify
 
           $(xcrun --find docc) process-archive \
              transform-for-static-hosting DerivedData/Build/Products/Debug-*/CalculatorUI.doccarchive \

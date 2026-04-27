@@ -26,10 +26,11 @@ jobs:
         run: xcodebuild -version
 
       - name: Run Unit Tests
+        shell: bash
         run: |
           xcodebuild test \
             -scheme swift-calculator \
             -destination "platform=macOS,arch=arm64" \
             -derivedDataPath DerivedData \
             -resultBundlePath TestResults/unit_test_result_bundle | \
-            xcbeautify && exit ${PIPESTATUS[0]}
+            xcbeautify
