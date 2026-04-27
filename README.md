@@ -5,11 +5,11 @@
 
 Calculator is a Swift package that provides an inline calculator with SwiftUI API.
 
-[![Github forks](https://img.shields.io/github/forks/cybozu/Calculator)](https://github.com/cybozu/Calculator/network/members)
-[![Github stars](https://img.shields.io/github/stars/cybozu/Calculator)](https://github.com/cybozu/Calculator/stargazers)
-[![Github issues](https://img.shields.io/github/issues/cybozu/Calculator)](https://github.com/cybozu/Calculator/issues)
-[![Github release](https://img.shields.io/github/v/release/cybozu/Calculator)](https://github.com/cybozu/Calculator/releases)
-[![Github license](https://img.shields.io/github/license/cybozu/Calculator)](https://github.com/cybozu/Calculator/blob/main/LICENSE)
+[![Github forks](https://img.shields.io/github/forks/cybozu/swift-calculator)](https://github.com/cybozu/swift-calculator/network/members)
+[![Github stars](https://img.shields.io/github/stars/cybozu/swift-calculator)](https://github.com/cybozu/swift-calculator/stargazers)
+[![Github issues](https://img.shields.io/github/issues/cybozu/swift-calculator)](https://github.com/cybozu/swift-calculator/issues)
+[![Github release](https://img.shields.io/github/v/release/cybozu/swift-calculator)](https://github.com/cybozu/swift-calculator/releases)
+[![Github license](https://img.shields.io/github/license/cybozu/swift-calculator)](https://github.com/cybozu/swift-calculator/blob/main/LICENSE)
 
 <img width="352" height="352" src="https://github.com/user-attachments/assets/2fd08868-84b2-4ff0-82a3-ef46be32986e" />
 
@@ -21,14 +21,14 @@ Calculator is a Swift package that provides an inline calculator with SwiftUI AP
 
 ## Documentation
 
-[Latest (Swift-DocC)](https://cybozu.github.io/Calculator/documentation/calculator/)
+[Latest (Swift-DocC)](https://cybozu.github.io/swift-calculator/documentation/calculatorui/)
 
 ## Usage
 
 If you want to use the classic preset calculator:
 
 ```swift
-import Calculator
+import CalculatorUI
 import SwiftUI
 
 struct ContentView: View {
@@ -47,7 +47,7 @@ struct ContentView: View {
 If you want to create your own preferred calculator interface:
 
 ```swift
-import Calculator
+import CalculatorUI
 import SwiftUI
 
 struct CustomCalculatorStyle: CalculatorStyle {

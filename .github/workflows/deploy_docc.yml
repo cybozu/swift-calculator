@@ -21,19 +21,19 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Build DocC
         run: |
           xcodebuild docbuild \
-            -scheme Calculator \
+            -scheme swift-calculator \
             -destination "generic/platform=iOS" \
             -derivedDataPath DerivedData
 
           $(xcrun --find docc) process-archive \
-             transform-for-static-hosting DerivedData/Build/Products/Debug-*/Calculator.doccarchive \
+             transform-for-static-hosting DerivedData/Build/Products/Debug-*/CalculatorUI.doccarchive \
              --output-path ./docs \
-             --hosting-base-path "Calculator"
+             --hosting-base-path "swift-calculator"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
@@ -48,9 +48,9 @@ jobs:
       id-token: write
     environment:
       name: github-pages
-      url: "https://cybozu.github.io/Calculator/documentation/calculator/"
+      url: "https://cybozu.github.io/swift-calculator/documentation/calculatorui"
 
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

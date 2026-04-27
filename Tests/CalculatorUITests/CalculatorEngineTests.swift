@@ -1,4 +1,4 @@
-@testable import Calculator
+@testable import CalculatorUI
 import Testing
 
 struct CalculatorEngineTests {

@@ -9,11 +9,11 @@
     @PageColor(orange)
 }
 
-Calculator is a Swift package that provides an inline calculator with SwiftUI API.
+swift-calculator is a swift package that provides an inline calculator with SwiftUI API.
 
 ## Additional Resources
 
-- [GitHub Repository](https://github.com/cybozu/Calculator)
+- [GitHub Repository](https://github.com/cybozu/swift-calculator)
 
 ## Overview
 

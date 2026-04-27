@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "CalculatorDemo",
+    name: "Example",
     products: [],
     targets: []
 )

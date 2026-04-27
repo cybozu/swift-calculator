@@ -7,7 +7,7 @@ let swiftSettings: [SwiftSetting] = [
 ]
 
 let package = Package(
-    name: "Calculator",
+    name: "swift-calculator",
     defaultLocalization: "en",
     platforms: [
         .iOS(.v26),
@@ -15,18 +15,18 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "Calculator",
-            targets: ["Calculator"]
+            name: "CalculatorUI",
+            targets: ["CalculatorUI"]
         ),
     ],
     targets: [
         .target(
-            name: "Calculator",
+            name: "CalculatorUI",
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "CalculatorTests",
-            dependencies: ["Calculator"],
+            name: "CalculatorUITests",
+            dependencies: ["CalculatorUI"],
             swiftSettings: swiftSettings
         ),
     ]

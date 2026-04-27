@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		189305672EA7528900950EA4 /* Calculator in Frameworks */ = {isa = PBXBuildFile; productRef = 189305662EA7528900950EA4 /* Calculator */; };
-		189305752EA7541800950EA4 /* Calculator.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 189305742EA7541800950EA4 /* Calculator.xctestplan */; };
+		18331E5C2F9F59D20067C8C0 /* CalculatorUI in Frameworks */ = {isa = PBXBuildFile; productRef = 18331E5B2F9F59D20067C8C0 /* CalculatorUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,8 +23,7 @@
 /* Begin PBXFileReference section */
 		1893053A2EA7519900950EA4 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		189305512EA7519B00950EA4 /* ExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		189305642EA751E500950EA4 /* Calculator */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Calculator; path = ..; sourceTree = "<group>"; };
-		189305742EA7541800950EA4 /* Calculator.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Calculator.xctestplan; sourceTree = "<group>"; };
+		189305642EA751E500950EA4 /* swift-calculator */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "swift-calculator"; path = ..; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -46,7 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				189305672EA7528900950EA4 /* Calculator in Frameworks */,
+				18331E5C2F9F59D20067C8C0 /* CalculatorUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,8 +61,7 @@
 		189305312EA7519900950EA4 = {
 			isa = PBXGroup;
 			children = (
-				189305742EA7541800950EA4 /* Calculator.xctestplan */,
-				189305642EA751E500950EA4 /* Calculator */,
+				189305642EA751E500950EA4 /* swift-calculator */,
 				1893053C2EA7519900950EA4 /* Example */,
 				189305542EA7519B00950EA4 /* ExampleUITests */,
 				189305652EA7528900950EA4 /* Frameworks */,
@@ -108,7 +105,7 @@
 			);
 			name = Example;
 			packageProductDependencies = (
-				189305662EA7528900950EA4 /* Calculator */,
+				18331E5B2F9F59D20067C8C0 /* CalculatorUI */,
 			);
 			productName = Example;
 			productReference = 1893053A2EA7519900950EA4 /* Example.app */;
@@ -182,7 +179,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				189305752EA7541800950EA4 /* Calculator.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -426,12 +422,16 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VHY32ZU4KA;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kyome.ExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -455,7 +455,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.kyome.ExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -501,9 +501,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		189305662EA7528900950EA4 /* Calculator */ = {
+		18331E5B2F9F59D20067C8C0 /* CalculatorUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = Calculator;
+			productName = CalculatorUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

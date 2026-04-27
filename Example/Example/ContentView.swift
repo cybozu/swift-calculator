@@ -5,7 +5,7 @@
 //  Created by ky0me22 on 2025/10/21.
 //
 
-import Calculator
+import CalculatorUI
 import SwiftUI
 
 struct ContentView: View {
