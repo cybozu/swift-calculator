@@ -17,7 +17,7 @@ jobs:
   build:
     runs-on: macos-26
     env:
-      DEVELOPER_DIR: "/Applications/Xcode_26.0.1.app/Contents/Developer"
+      DEVELOPER_DIR: "/Applications/Xcode_26.2.0.app/Contents/Developer"
 
     steps:
       - name: Checkout
@@ -25,6 +25,7 @@ jobs:
 
       - name: Check Env
         run: |
+          xcodebuild -version
           xcodebuild -list
           xcrun xctrace list devices 2>&1 | grep -v Apple
 
@@ -32,7 +33,7 @@ jobs:
         run: |
           xcodebuild docbuild \
             -scheme swift-calculator \
-            -destination "generic/platform=iOS Simulator" \
+            -destination "generic/platform=iOS" \
             -derivedDataPath DerivedData | \
             xcbeautify && exit ${PIPESTATUS[0]}
 
