@@ -32,8 +32,8 @@ jobs:
         run: |
           xcodebuild docbuild \
             -scheme swift-calculator \
-            -destination "generic/platform=iOS" \
             -derivedDataPath DerivedData
+            -destination "generic/platform=iOS Simulator" \
 
           $(xcrun --find docc) process-archive \
              transform-for-static-hosting DerivedData/Build/Products/Debug-*/CalculatorUI.doccarchive \
