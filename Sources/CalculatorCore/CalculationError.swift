@@ -1,10 +1,10 @@
 import Foundation
 
-enum CalculatorError: LocalizedError {
+public enum CalculationError: LocalizedError {
     case invalidFormula
     case undefined
 
-    var errorDescription: String? {
+    public var errorDescription: String? {
         let localizationValue: String.LocalizationValue = switch self {
         case .invalidFormula:
             "invalidFormula"

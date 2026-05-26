@@ -15,13 +15,22 @@ let package = Package(
     ],
     products: [
         .library(
+            name: "CalculatorCore",
+            targets: ["CalculatorCore"]
+        ),
+        .library(
             name: "CalculatorUI",
             targets: ["CalculatorUI"]
         ),
     ],
     targets: [
         .target(
+            name: "CalculatorCore",
+            swiftSettings: swiftSettings
+        ),
+        .target(
             name: "CalculatorUI",
+            dependencies: ["CalculatorCore"],
             swiftSettings: swiftSettings
         ),
         .testTarget(

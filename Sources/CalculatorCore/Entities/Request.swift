@@ -1,6 +1,7 @@
 import Foundation
 
-enum Request: CustomStringConvertible, Equatable {
+// TODO: Tokenにリネーム
+enum Request: Equatable, CustomStringConvertible {
     case term(Term)
     case `operator`(Operator)
 
@@ -76,8 +77,8 @@ extension [Request] {
     }
 
     func calculated() throws -> [Request] {
-        guard count > 2 else {
-            throw CalculatorError.invalidFormula
+        guard count >= 3 else {
+            throw CalculationError.invalidFormula
         }
         var copy = self
 
@@ -113,11 +114,11 @@ extension [Request] {
             while copy.count > 2, let index = copy.firstOperatorIndex(where: { $0 == .operator(operation.operator) }) {
                 guard let beforeSignedTerm = copy.signedTerm(before: index),
                       let afterSignedTerm = copy.signedTerm(after: index) else {
-                    throw CalculatorError.invalidFormula
+                    throw CalculationError.invalidFormula
                 }
                 if operation.needsZeroValidation {
                     guard !afterSignedTerm.value.isZero else {
-                        throw CalculatorError.undefined
+                        throw CalculationError.undefined
                     }
                 }
                 copy.remove(at: index - beforeSignedTerm.cost, count: beforeSignedTerm.cost + 1 + afterSignedTerm.cost)
@@ -133,7 +134,7 @@ extension [Request] {
         } else if copy.count == 2, case .operator(.subtraction) = copy.first, case let .term(value) = copy.last {
             return [.operator(.subtraction), .term(.init(digits: value.digits))]
         } else {
-            throw CalculatorError.undefined
+            throw CalculationError.undefined
         }
     }
 }

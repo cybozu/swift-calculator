@@ -1,9 +1,10 @@
 import Foundation
 
-struct Term: CustomStringConvertible, Equatable {
+// TODO: Operandにリネーム
+public struct Term: Equatable, CustomStringConvertible {
     var digits: [Digit]
 
-    var description: String {
+    public var description: String {
         digits.map(String.init(describing:)).joined()
     }
 

@@ -1,3 +1,4 @@
+import CalculatorCore
 import SwiftUI
 
 /// A type that represents the calculation role.
