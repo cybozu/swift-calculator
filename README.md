@@ -1,5 +1,5 @@
 <picture>
-  <source srcset="https://github.com/user-attachments/assets/0ee71d7c-3f28-4e4f-b703-7495b7e4f2c8" height="70" media="(prefers-color-scheme: dark)" alt="WebUI by Cybozu">
+  <source srcset="https://github.com/user-attachments/assets/0ee71d7c-3f28-4e4f-b703-7495b7e4f2c8" height="70" media="(prefers-color-scheme: dark)" alt="Calculator by Cybozu">
   <img src="https://github.com/user-attachments/assets/983fd7f4-7f17-42b2-8eee-f3f3fd0205e2" height="70" alt="Calculator by Cybozu">
 </picture>
 
