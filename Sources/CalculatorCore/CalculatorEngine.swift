@@ -1,148 +1,148 @@
 import Foundation
 
 public struct CalculatorEngine {
-    var requests = [Request]()
+    var tokens = [Token]()
     var error: CalculationError?
-    public internal(set) var isEditingTerm = false
+    public internal(set) var isEditingOperand = false
 
     // TODO: Formatterに置き換える
     public var expression: String {
         if let error {
             error.localizedDescription
-        } else if requests.isEmpty {
+        } else if tokens.isEmpty {
             "0"
         } else {
-            requests.map(String.init(describing:)).joined()
+            tokens.map(String.init(describing:)).joined()
         }
     }
 
     public init() {}
 
     public mutating func reset(with decimalValue: Decimal?) {
-        requests = decimalValue.map([Request].init(decimalValue:)) ?? []
-        isEditingTerm = false
+        tokens = decimalValue.map([Token].init(decimalValue:)) ?? []
+        isEditingOperand = false
         error = nil
     }
 
     public mutating func handle(number input: Int) {
-        switch requests.last {
-        case var .term(value):
+        switch tokens.last {
+        case var .operand(value):
             if value.digits == [.number(0)] {
                 value.digits = [.number(input)]
             } else {
                 value.digits.append(.number(input))
             }
-            requests[requests.count - 1] = .term(value)
+            tokens[tokens.count - 1] = .operand(value)
         case .operator:
-            requests.append(.term(.init(digits: [.number(input)])))
-            isEditingTerm = true
+            tokens.append(.operand(.init(digits: [.number(input)])))
+            isEditingOperand = true
         case .none:
-            requests.append(.term(.init(digits: [.number(input)])))
-            isEditingTerm = true
+            tokens.append(.operand(.init(digits: [.number(input)])))
+            isEditingOperand = true
         }
     }
 
     public mutating func handlePeriod() {
-        switch requests.last {
-        case var .term(value):
+        switch tokens.last {
+        case var .operand(value):
             guard !value.digits.contains(.period) else {
                 return
             }
             value.digits.append(.period)
-            requests[requests.count - 1] = .term(value)
+            tokens[tokens.count - 1] = .operand(value)
         case .operator, .none:
-            requests.append(.term(.init(digits: [.number(0), .period])))
-            isEditingTerm = true
+            tokens.append(.operand(.init(digits: [.number(0), .period])))
+            isEditingOperand = true
         }
     }
 
     public mutating func handle(operator input: Operator) {
-        switch requests.last {
-        case .term:
-            requests.append(.operator(input))
+        switch tokens.last {
+        case .operand:
+            tokens.append(.operator(input))
         case let .operator(value):
             switch value {
             case .addition:
-                requests.removeLast()
-                requests.append(.operator(input))
+                tokens.removeLast()
+                tokens.append(.operator(input))
             case .subtraction:
                 guard input != .subtraction else {
                     return
                 }
-                switch requests.dropLast().last {
-                case .term:
-                    requests.removeLast()
-                    requests.append(.operator(input))
+                switch tokens.dropLast().last {
+                case .operand:
+                    tokens.removeLast()
+                    tokens.append(.operator(input))
                 case .operator:
-                    requests.removeLast(2)
-                    requests.append(.operator(input))
+                    tokens.removeLast(2)
+                    tokens.append(.operator(input))
                 case .none:
-                    requests.removeAll()
+                    tokens.removeAll()
                 }
             case .multiplication, .division, .modulus:
                 if input != .subtraction {
-                    requests.removeLast()
+                    tokens.removeLast()
                 }
-                requests.append(.operator(input))
+                tokens.append(.operator(input))
             }
         case .none:
             if input != .subtraction {
-                requests.append(.term(.init(digits: [.number(0)])))
-                isEditingTerm = true
+                tokens.append(.operand(.init(digits: [.number(0)])))
+                isEditingOperand = true
             }
-            requests.append(.operator(input))
+            tokens.append(.operator(input))
         }
     }
 
     public mutating func handlePlusMinus() {
-        guard case .term = requests.last else {
+        guard case .operand = tokens.last else {
             return
         }
-        switch requests.dropLast().last {
-        case .term: // term term
-            fatalError("Error: There are two or more consecutive terms.")
+        switch tokens.dropLast().last {
+        case .operand: // operand operand
+            fatalError("Error: There are two or more consecutive operands.")
         case let .operator(value):
-            switch requests.dropLast(2).last {
-            case .term: // term operator term
+            switch tokens.dropLast(2).last {
+            case .operand: // operand operator operand
                 switch value {
                 case .addition:
-                    requests[requests.count - 2] = .operator(.subtraction)
+                    tokens[tokens.count - 2] = .operator(.subtraction)
                 case .subtraction:
-                    requests[requests.count - 2] = .operator(.addition)
+                    tokens[tokens.count - 2] = .operator(.addition)
                 case .multiplication, .division, .modulus:
-                    requests.insert(.operator(.subtraction), at: requests.count - 1)
+                    tokens.insert(.operator(.subtraction), at: tokens.count - 1)
                 }
-            case let .operator(preValue): // operator operator term
+            case let .operator(preValue): // operator operator operand
                 switch (preValue, value) {
                 case (.multiplication, .subtraction),
                     (.division, .subtraction),
                     (.modulus, .subtraction):
-                    requests.remove(at: requests.count - 2)
+                    tokens.remove(at: tokens.count - 2)
                 default:
                     fatalError("Error: There are two or more consecutive operators.")
                 }
-            case .none: // operator term
+            case .none: // operator operand
                 if value == .subtraction {
-                    requests.removeFirst()
+                    tokens.removeFirst()
                 } else {
-                    requests.insert(.operator(.subtraction), at: 1)
+                    tokens.insert(.operator(.subtraction), at: 1)
                 }
             }
-        case .none: // term
-            requests.insert(.operator(.subtraction), at: 0)
+        case .none: // operand
+            tokens.insert(.operator(.subtraction), at: 0)
         }
     }
 
     public mutating func handleCalculate() {
         do {
-            requests = try requests.calculated()
-            isEditingTerm = false
+            tokens = try tokens.calculated()
+            isEditingOperand = false
         } catch let error as CalculationError {
             switch error {
             case .undefined:
                 self.error = error
-                requests.removeAll()
-                isEditingTerm = false
+                tokens.removeAll()
+                isEditingOperand = false
             case .invalidFormula:
                 break
             }
@@ -152,33 +152,33 @@ public struct CalculatorEngine {
     }
 
     public mutating func handleAllClear() {
-        requests.removeAll()
+        tokens.removeAll()
         error = nil
     }
 
     public mutating func handleClear() {
-        if case .term = requests.last {
-            requests.removeLast()
+        if case .operand = tokens.last {
+            tokens.removeLast()
         }
-        isEditingTerm = false
+        isEditingOperand = false
     }
 
     public mutating func handleDelete() {
-        switch requests.last {
-        case var .term(value):
+        switch tokens.last {
+        case var .operand(value):
             value.digits.removeLast()
             if value.digits.isEmpty {
-                requests.removeLast()
+                tokens.removeLast()
             } else {
-                requests[requests.count - 1] = .term(value)
+                tokens[tokens.count - 1] = .operand(value)
             }
         case .operator:
-            requests.removeLast()
+            tokens.removeLast()
         case .none:
             return
         }
-        if requests.isEmpty {
-            isEditingTerm = false
+        if tokens.isEmpty {
+            isEditingOperand = false
         }
     }
 }

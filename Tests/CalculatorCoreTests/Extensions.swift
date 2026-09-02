@@ -10,7 +10,7 @@ extension [Digit] {
     }
 }
 
-extension Term {
+extension Operand {
     init(_ doubleValue: Double) {
         self.init(digits: [Digit](doubleValue: doubleValue))
     }

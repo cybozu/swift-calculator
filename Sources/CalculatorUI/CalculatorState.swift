@@ -11,8 +11,8 @@ final class CalculatorState {
         engine.expression
     }
 
-    var isEditingTerm: Bool {
-        engine.isEditingTerm
+    var isEditingOperand: Bool {
+        engine.isEditingOperand
     }
 
     init() {
@@ -55,7 +55,7 @@ final class CalculatorState {
     }
 
     func toggleClearRole() {
-        rows[0].cells[1].role = .command(isEditingTerm ? .clear : .allClear)
+        rows[0].cells[1].role = .command(isEditingOperand ? .clear : .allClear)
     }
 
     func onTap(_ role: Role) {

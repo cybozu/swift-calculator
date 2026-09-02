@@ -2,7 +2,7 @@
 import Foundation
 import Testing
 
-struct TermTests {
+struct OperandTests {
     @Test(arguments: [
         .init(
             digits: [],
@@ -58,14 +58,14 @@ struct TermTests {
             expectedDecimalValue: nil,
             expectedIsZero: false
         ),
-    ] as [TermCondition])
-    func decimalValue(_ condition: TermCondition) {
-        let actual = Term(digits: condition.digits)
+    ] as [OperandCondition])
+    func decimalValue(_ condition: OperandCondition) {
+        let actual = Operand(digits: condition.digits)
         #expect(actual.decimalValue == condition.expectedDecimalValue)
     }
 }
 
-struct TermCondition {
+struct OperandCondition {
     var digits: [Digit]
     var expectedDescription: String
     var expectedDecimalValue: Decimal?

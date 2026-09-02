@@ -32,7 +32,7 @@ public struct Calculator: View {
             guard value != newValue else { return }
             value = newValue
         }
-        .onChange(of: state.isEditingTerm, initial: true) { _, _ in
+        .onChange(of: state.isEditingOperand, initial: true) { _, _ in
             state.toggleClearRole()
         }
     }
