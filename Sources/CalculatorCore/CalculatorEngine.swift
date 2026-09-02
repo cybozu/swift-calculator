@@ -1,9 +1,9 @@
 import Foundation
 
 public struct CalculatorEngine {
-    private var requests = [Request]()
-    private var error: CalculationError?
-    public private(set) var isEditingTerm = false
+    var requests = [Request]()
+    var error: CalculationError?
+    public internal(set) var isEditingTerm = false
 
     // TODO: Formatterに置き換える
     public var expression: String {

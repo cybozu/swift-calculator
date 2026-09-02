@@ -1,4 +1,4 @@
-@testable import CalculatorUI
+@testable import CalculatorCore
 import Foundation
 import Testing
 

@@ -1,4 +1,4 @@
-@testable import CalculatorUI
+@testable import CalculatorCore
 import Foundation
 import Testing
 
@@ -330,5 +330,5 @@ struct CalculatedCondition {
 
 struct ErrorCondition {
     var requests: [Request]
-    var expectedError: CalculatorError
+    var expectedError: CalculationError
 }

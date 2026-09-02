@@ -36,8 +36,8 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "CalculatorUITests",
-            dependencies: ["CalculatorUI"],
+            name: "CalculatorCoreTests",
+            dependencies: ["CalculatorCore"],
             swiftSettings: swiftSettings
         ),
     ]
