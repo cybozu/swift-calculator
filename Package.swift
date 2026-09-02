@@ -26,11 +26,13 @@ let package = Package(
     targets: [
         .target(
             name: "CalculatorCore",
+            resources: [.process("Resources")],
             swiftSettings: swiftSettings
         ),
         .target(
             name: "CalculatorUI",
             dependencies: ["CalculatorCore"],
+            resources: [.process("Resources")],
             swiftSettings: swiftSettings
         ),
         .testTarget(
