@@ -25,6 +25,11 @@ Calculator is a Swift package that provides an inline calculator with SwiftUI AP
 
 ## Usage
 
+This package provides two library products:
+
+- `CalculatorUI`: SwiftUI calculator views.
+- `CalculatorCore`: the calculation engine with no dependency on UI.
+
 If you want to use the classic preset calculator:
 
 ```swift
@@ -87,6 +92,36 @@ struct ContentView: View {
             .calculatorStyle(.custom)
     }
 }
+```
+
+If you want to use only the calculation logic without any views:
+
+```swift
+import CalculatorCore
+
+// Drive the engine as if pressing calculator buttons.
+var engine = CalculatorEngine()
+engine.handle(number: 1)
+engine.handle(operator: .addition)
+engine.handle(number: 2)
+
+let value = try engine.calculatedDecimalValue() // Decimal(3)
+
+// Or build a token sequence directly and format it.
+// 1+1=+1= is interpreted as ((1+1)+1) and evaluates to 3.
+let tokens: [Token] = [
+    .operand(.init(decimalValue: 1)),
+    .operator(.addition),
+    .operand(.init(decimalValue: 1)),
+    .operator(.equal),
+    .operator(.addition),
+    .operand(.init(decimalValue: 1)),
+    .operator(.equal),
+]
+
+let formatter = CalculatorFormatter()
+formatter.string(from: tokens)     // "3", or a localized error description
+formatter.expression(from: tokens) // "1+1=+1="
 ```
 
 ## Privacy Manifest
