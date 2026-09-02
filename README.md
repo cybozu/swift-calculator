@@ -94,22 +94,13 @@ struct ContentView: View {
 }
 ```
 
-If you want to use only the calculation logic without any views:
+If you want to use only the calculation logic without any views, build a formula in either of two ways:
 
 ```swift
 import CalculatorCore
 
-// Drive the engine as if pressing calculator buttons.
-var engine = CalculatorEngine()
-engine.handle(number: 1)
-engine.handle(operator: .addition)
-engine.handle(number: 2)
-engine.handle(operator: .equal)
-
-let value = try engine.tokens.calculatedDecimalValue() // Decimal(3)
-
-// Or build a token sequence directly and format it.
-// 1+1=+1= is interpreted as ((1+1)+1) and evaluates to 3.
+// 1. Build a token sequence directly.
+//    1+1=+1= is interpreted as ((1+1)+1).
 let tokens: [Token] = [
     .operand(.init(decimalValue: 1)),
     .operator(.addition),
@@ -120,9 +111,26 @@ let tokens: [Token] = [
     .operator(.equal),
 ]
 
-let formatter = CalculatorFormatter()
-formatter.string(from: tokens)     // "3", or a localized error description
-formatter.expression(from: tokens) // "1+1=+1="
+// 2. Drive CalculatorEngine as if pressing calculator buttons.
+var engine = CalculatorEngine()
+engine.handle(number: 1)
+engine.handle(operator: .addition)
+engine.handle(number: 1)
+engine.handle(operator: .equal)
+engine.handle(operator: .addition)
+engine.handle(number: 1)
+engine.handle(operator: .equal)
+// engine.tokens now holds the calculated tokens.
+```
+
+Then take the calculated result out of the tokens:
+
+```swift
+// As a decimal value:
+let value = try tokens.calculatedDecimalValue() // Decimal(3)
+
+// As a string, or a localized error description when the calculation fails:
+let string = CalculatorFormatter().string(from: tokens) // "3"
 ```
 
 ## Privacy Manifest
