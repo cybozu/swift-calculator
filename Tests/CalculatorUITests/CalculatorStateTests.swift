@@ -90,6 +90,62 @@ struct CalculatorStateTests {
     }
 
     @Test
+    func number_after_settled_result_starts_a_new_calculation() {
+        let sut = CalculatorState()
+        sut.onTap(.number(1))
+        sut.onTap(.operator(.addition))
+        sut.onTap(.number(2))
+        sut.onTap(.operator(.equal))
+        sut.onTap(.number(5))
+        #expect(sut.expression == "5")
+    }
+
+    @Test
+    func number_after_error_starts_a_new_calculation() {
+        let sut = CalculatorState()
+        sut.onTap(.number(1))
+        sut.onTap(.operator(.division))
+        sut.onTap(.number(0))
+        sut.onTap(.operator(.equal))
+        sut.onTap(.number(7))
+        #expect(sut.expression == "7")
+    }
+
+    @Test
+    func number_while_editing_operand_keeps_appending() {
+        let sut = CalculatorState()
+        sut.onTap(.number(2))
+        sut.onTap(.number(5))
+        sut.onTap(.command(.delete))
+        sut.onTap(.number(3))
+        #expect(sut.expression == "23")
+    }
+
+    @Test
+    func operator_after_settled_result_continues_the_calculation() {
+        let sut = CalculatorState()
+        sut.onTap(.number(1))
+        sut.onTap(.operator(.addition))
+        sut.onTap(.number(2))
+        sut.onTap(.operator(.equal))
+        sut.onTap(.operator(.addition))
+        sut.onTap(.number(1))
+        sut.onTap(.operator(.equal))
+        #expect(sut.expression == "4")
+    }
+
+    @Test
+    func plus_minus_after_settled_result_negates_it() {
+        let sut = CalculatorState()
+        sut.onTap(.number(1))
+        sut.onTap(.operator(.addition))
+        sut.onTap(.number(2))
+        sut.onTap(.operator(.equal))
+        sut.onTap(.command(.plusMinus))
+        #expect(sut.expression == "-3")
+    }
+
+    @Test
     func rows_keep_stable_identifiers() {
         let sut = CalculatorState()
         let before = sut.rows.flatMap { [$0.id] + $0.cells.map(\.id) }

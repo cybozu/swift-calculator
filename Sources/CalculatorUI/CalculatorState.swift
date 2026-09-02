@@ -72,11 +72,21 @@ final class CalculatorState {
         engine.reset(with: Decimal(string: value))
     }
 
+    // Starting a new calculation over a settled result is a UI policy:
+    // the engine itself keeps appending to whatever tokens it holds.
+    private func discardSettledResult() {
+        if engine.error != nil || (engine.tokens.isSettledValue && !engine.isEditingOperand) {
+            engine.handleAllClear()
+        }
+    }
+
     func onTap(_ role: Role) {
         switch role {
         case let .number(value):
+            discardSettledResult()
             engine.handle(number: value)
         case .period:
+            discardSettledResult()
             engine.handlePeriod()
         case let .operator(value):
             engine.handle(operator: value)

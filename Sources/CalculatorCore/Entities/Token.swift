@@ -81,7 +81,7 @@ extension [Token] {
 
     /// Whether the tokens represent a single already-calculated value,
     /// such as an engine's stack right after the equal operator folded it.
-    var isSettledValue: Bool {
+    public var isSettledValue: Bool {
         if count == 1, case let .operand(operand) = self[0] {
             return operand.decimalValue != nil
         }
