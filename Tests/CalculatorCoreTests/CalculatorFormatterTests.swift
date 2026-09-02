@@ -139,7 +139,7 @@ struct CalculatorFormatterTests {
         sut.handle(number: 1)
         sut.handle(operator: .addition)
         sut.handle(number: 2)
-        #expect(try sut.calculatedDecimalValue() == 3)
+        #expect(try sut.tokens.calculatedDecimalValue() == 3)
     }
 
     @Test
@@ -149,7 +149,7 @@ struct CalculatorFormatterTests {
         sut.handle(operator: .addition)
         sut.handle(number: 2)
         sut.handle(operator: .equal)
-        #expect(try sut.calculatedDecimalValue() == 3)
+        #expect(try sut.tokens.calculatedDecimalValue() == 3)
     }
 }
 

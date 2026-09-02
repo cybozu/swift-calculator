@@ -9,12 +9,6 @@ public struct CalculatorEngine {
 
     public init() {}
 
-    /// Returns the calculated result of the current tokens as a decimal value.
-    /// - Throws: A `CalculationError` when the tokens do not form a calculable formula.
-    public func calculatedDecimalValue() throws -> Decimal {
-        try tokens.calculatedDecimalValue()
-    }
-
     public mutating func reset(with decimalValue: Decimal?) {
         tokens = decimalValue.map([Token].init(decimalValue:)) ?? []
         isEditingOperand = false

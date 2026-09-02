@@ -106,7 +106,7 @@ engine.handle(operator: .addition)
 engine.handle(number: 2)
 engine.handle(operator: .equal)
 
-let value = try engine.calculatedDecimalValue() // Decimal(3)
+let value = try engine.tokens.calculatedDecimalValue() // Decimal(3)
 
 // Or build a token sequence directly and format it.
 // 1+1=+1= is interpreted as ((1+1)+1) and evaluates to 3.
