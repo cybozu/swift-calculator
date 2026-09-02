@@ -57,6 +57,10 @@ public struct CalculatorEngine {
     }
 
     public mutating func handle(operator input: Operator) {
+        guard input != .equal else {
+            handleCalculate()
+            return
+        }
         switch tokens.last {
         case .operand:
             tokens.append(.operator(input))
@@ -84,6 +88,8 @@ public struct CalculatorEngine {
                     tokens.removeLast()
                 }
                 tokens.append(.operator(input))
+            case .equal:
+                break
             }
         case .none:
             if input != .subtraction {
@@ -111,6 +117,8 @@ public struct CalculatorEngine {
                     tokens[tokens.count - 2] = .operator(.addition)
                 case .multiplication, .division, .modulus:
                     tokens.insert(.operator(.subtraction), at: tokens.count - 1)
+                case .equal:
+                    break
                 }
             case let .operator(preValue): // operator operator operand
                 switch (preValue, value) {

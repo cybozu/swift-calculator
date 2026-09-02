@@ -5,7 +5,7 @@ public enum Operator: String, Sendable, CaseIterable, CustomStringConvertible {
     case multiplication
     case division
     case modulus
-    // TODO: equalも加える
+    case equal
 
     /// A string that represents the calculation operator.
     public var description: String {
@@ -20,6 +20,8 @@ public enum Operator: String, Sendable, CaseIterable, CustomStringConvertible {
             "÷"
         case .modulus:
             "%"
+        case .equal:
+            "="
         }
     }
 }

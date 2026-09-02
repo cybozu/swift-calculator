@@ -76,6 +76,25 @@ extension [Token] {
     }
 
     func calculated() throws -> [Token] {
+        var result: [Token]?
+        for segment in split(separator: .operator(.equal), omittingEmptySubsequences: false) {
+            guard let first = segment.first else {
+                continue
+            }
+            let formula: [Token] = if case .operator = first {
+                (result ?? []) + segment
+            } else {
+                Array(segment)
+            }
+            result = try formula.calculatedFormula()
+        }
+        guard let result else {
+            throw CalculationError.invalidFormula
+        }
+        return result
+    }
+
+    private func calculatedFormula() throws -> [Token] {
         guard count >= 3 else {
             throw CalculationError.invalidFormula
         }

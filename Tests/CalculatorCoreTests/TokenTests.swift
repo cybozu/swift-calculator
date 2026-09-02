@@ -303,6 +303,140 @@ struct TokenTests {
         let actual = try condition.tokens.calculated()
         #expect(actual == condition.expectedTokens)
     }
+
+    @Test(arguments: [
+        // 1+1= -> 2
+        .init(
+            tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(1)), .operator(.equal)],
+            expectedTokens: [.operand(.init(2))]
+        ),
+        // 1+1=+1=+1= -> ((1+1)+1)+1 -> 4
+        .init(
+            tokens: [
+                .operand(.init(1)),
+                .operator(.addition),
+                .operand(.init(1)),
+                .operator(.equal),
+                .operator(.addition),
+                .operand(.init(1)),
+                .operator(.equal),
+                .operator(.addition),
+                .operand(.init(1)),
+                .operator(.equal)
+            ],
+            expectedTokens: [.operand(.init(4))]
+        ),
+        // 1+1=-1= -> (1+1)-1 -> 1
+        .init(
+            tokens: [
+                .operand(.init(1)),
+                .operator(.addition),
+                .operand(.init(1)),
+                .operator(.equal),
+                .operator(.subtraction),
+                .operand(.init(1)),
+                .operator(.equal)
+            ],
+            expectedTokens: [.operand(.init(1))]
+        ),
+        // 1-3=+1= -> (1-3)+1 -> -1
+        .init(
+            tokens: [
+                .operand(.init(1)),
+                .operator(.subtraction),
+                .operand(.init(3)),
+                .operator(.equal),
+                .operator(.addition),
+                .operand(.init(1)),
+                .operator(.equal)
+            ],
+            expectedTokens: [.operator(.subtraction), .operand(.init(1))]
+        ),
+        // 2×3=%4= -> (2×3)%4 -> 2
+        .init(
+            tokens: [
+                .operand(.init(2)),
+                .operator(.multiplication),
+                .operand(.init(3)),
+                .operator(.equal),
+                .operator(.modulus),
+                .operand(.init(4)),
+                .operator(.equal)
+            ],
+            expectedTokens: [.operand(.init(2))]
+        ),
+        // 1+1=5+3= -> a segment starting with an operand restarts the formula -> 8
+        .init(
+            tokens: [
+                .operand(.init(1)),
+                .operator(.addition),
+                .operand(.init(1)),
+                .operator(.equal),
+                .operand(.init(5)),
+                .operator(.addition),
+                .operand(.init(3)),
+                .operator(.equal)
+            ],
+            expectedTokens: [.operand(.init(8))]
+        ),
+        // 1+1== -> an empty segment keeps the previous result -> 2
+        .init(
+            tokens: [
+                .operand(.init(1)),
+                .operator(.addition),
+                .operand(.init(1)),
+                .operator(.equal),
+                .operator(.equal)
+            ],
+            expectedTokens: [.operand(.init(2))]
+        ),
+        // 1+1=+1 (without trailing equal) -> 3
+        .init(
+            tokens: [
+                .operand(.init(1)),
+                .operator(.addition),
+                .operand(.init(1)),
+                .operator(.equal),
+                .operator(.addition),
+                .operand(.init(1))
+            ],
+            expectedTokens: [.operand(.init(3))]
+        ),
+    ] as [CalculatedCondition])
+    func calculated_chained_expression(_ condition: CalculatedCondition) throws {
+        let actual = try condition.tokens.calculated()
+        #expect(actual == condition.expectedTokens)
+    }
+
+    @Test(arguments: [
+        .init(
+            tokens: [.operator(.equal)],
+            expectedError: .invalidFormula
+        ),
+        // +1= -> a segment starting with an operator requires a previous result
+        .init(
+            tokens: [.operator(.addition), .operand(.init(1)), .operator(.equal)],
+            expectedError: .invalidFormula
+        ),
+        // 6÷2=÷0= -> undefined
+        .init(
+            tokens: [
+                .operand(.init(6)),
+                .operator(.division),
+                .operand(.init(2)),
+                .operator(.equal),
+                .operator(.division),
+                .operand(.init(0)),
+                .operator(.equal)
+            ],
+            expectedError: .undefined
+        ),
+    ] as [ErrorCondition])
+    func calculated_chained_expression_error(_ condition: ErrorCondition) throws {
+        #expect(throws: condition.expectedError) {
+            try condition.tokens.calculated()
+        }
+    }
 }
 
 struct TokensCondition {

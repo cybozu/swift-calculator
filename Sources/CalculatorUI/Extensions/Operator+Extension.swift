@@ -15,6 +15,8 @@ extension Operator {
             Image(systemName: "divide")
         case .modulus:
             Image(systemName: "percent")
+        case .equal:
+            Image(systemName: "equal")
         }
     }
 }

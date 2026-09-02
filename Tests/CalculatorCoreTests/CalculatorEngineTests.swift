@@ -1593,6 +1593,17 @@ struct CalculatorEngineTests {
     }
 
     @Test
+    func handle_operator_input_equal() {
+        var sut = CalculatorEngine()
+        sut.isEditingOperand = true
+        sut.tokens = [.operand(.init(1)), .operator(.addition), .operand(.init(1))]
+        sut.handle(operator: .equal)
+        #expect(!sut.isEditingOperand)
+        #expect(sut.tokens == [.operand(.init(2))])
+        #expect(sut.expression == "2")
+    }
+
+    @Test
     func handle_all_clear() {
         var sut = CalculatorEngine()
         sut.isEditingOperand = true
