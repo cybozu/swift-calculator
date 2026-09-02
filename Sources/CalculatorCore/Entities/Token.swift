@@ -1,10 +1,12 @@
 import Foundation
 
-enum Token: Equatable, Sendable, CustomStringConvertible {
+/// A type that represents an element of the calculation formula.
+public enum Token: Equatable, Sendable, CustomStringConvertible {
     case operand(Operand)
     case `operator`(Operator)
 
-    var description: String {
+    /// A string that represents the token.
+    public var description: String {
         switch self {
         case let .operand(value):
             String(describing: value)
@@ -23,7 +25,9 @@ enum Token: Equatable, Sendable, CustomStringConvertible {
 }
 
 extension [Token] {
-    init(decimalValue: Decimal) {
+    /// Creates tokens that represent the given decimal value.
+    /// A negative value is represented by a subtraction operator followed by an operand.
+    public init(decimalValue: Decimal) {
         self = if decimalValue.isSignMinus {
             [.operator(.subtraction)]
         } else {
@@ -73,6 +77,17 @@ extension [Token] {
             return nil
         }
         return SignedOperand(value: -value, cost: 2)
+    }
+
+    /// Returns the calculated result of the tokens as a decimal value.
+    /// - Throws: A `CalculationError` when the tokens do not form a calculable formula.
+    public func calculatedDecimalValue() throws -> Decimal {
+        let result = try calculated()
+        guard case let .operand(operand) = result.last,
+              let value = operand.decimalValue else {
+            throw CalculationError.invalidFormula
+        }
+        return result.count == 2 ? -value : value
     }
 
     func calculated() throws -> [Token] {

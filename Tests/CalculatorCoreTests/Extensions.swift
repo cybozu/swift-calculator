@@ -15,3 +15,13 @@ extension Operand {
         self.init(digits: [Digit](doubleValue: doubleValue))
     }
 }
+
+extension CalculatorEngine {
+    var expression: String {
+        if let error {
+            error.localizedDescription
+        } else {
+            CalculatorFormatter().expression(from: tokens)
+        }
+    }
+}

@@ -1,22 +1,19 @@
 import Foundation
 
 public struct CalculatorEngine {
-    var tokens = [Token]()
-    var error: CalculationError?
+    /// The tokens that represent the formula under editing.
+    public internal(set) var tokens = [Token]()
+    /// The error that occurred in the last calculation, or `nil` when there is no error.
+    public internal(set) var error: CalculationError?
     public internal(set) var isEditingOperand = false
 
-    // TODO: Formatterに置き換える
-    public var expression: String {
-        if let error {
-            error.localizedDescription
-        } else if tokens.isEmpty {
-            "0"
-        } else {
-            tokens.map(String.init(describing:)).joined()
-        }
-    }
-
     public init() {}
+
+    /// Returns the calculated result of the current tokens as a decimal value.
+    /// - Throws: A `CalculationError` when the tokens do not form a calculable formula.
+    public func calculatedDecimalValue() throws -> Decimal {
+        try tokens.calculatedDecimalValue()
+    }
 
     public mutating func reset(with decimalValue: Decimal?) {
         tokens = decimalValue.map([Token].init(decimalValue:)) ?? []

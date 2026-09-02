@@ -5,10 +5,15 @@ import Observation
 @MainActor @Observable
 final class CalculatorState {
     private var engine = CalculatorEngine()
+    private let formatter = CalculatorFormatter()
     var rows: [Row]
 
     var expression: String {
-        engine.expression
+        if let error = engine.error {
+            error.localizedDescription
+        } else {
+            formatter.expression(from: engine.tokens)
+        }
     }
 
     var isEditingOperand: Bool {
