@@ -8,7 +8,8 @@ public struct CalculatorFormatter: Sendable {
     /// or a localized error description when the calculation fails.
     public func string(from tokens: [Token]) -> String {
         do {
-            return try tokens.calculated().map(String.init(describing:)).joined()
+            let result = try tokens.isSettledValue ? tokens : tokens.calculated()
+            return result.map(String.init(describing:)).joined()
         } catch {
             let calculationError = error as? CalculationError ?? .invalidFormula
             return calculationError.localizedDescription

@@ -104,6 +104,7 @@ var engine = CalculatorEngine()
 engine.handle(number: 1)
 engine.handle(operator: .addition)
 engine.handle(number: 2)
+engine.handle(operator: .equal)
 
 let value = try engine.calculatedDecimalValue() // Decimal(3)
 

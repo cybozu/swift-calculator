@@ -79,10 +79,24 @@ extension [Token] {
         return SignedOperand(value: -value, cost: 2)
     }
 
+    /// Whether the tokens represent a single already-calculated value,
+    /// such as an engine's stack right after the equal operator folded it.
+    var isSettledValue: Bool {
+        if count == 1, case let .operand(operand) = self[0] {
+            return operand.decimalValue != nil
+        }
+        if count == 2, case .operator(.subtraction) = self[0],
+           case let .operand(operand) = self[1] {
+            return operand.decimalValue != nil
+        }
+        return false
+    }
+
     /// Returns the calculated result of the tokens as a decimal value.
+    /// A stack that already holds a single settled value is returned as is.
     /// - Throws: A `CalculationError` when the tokens do not form a calculable formula.
     public func calculatedDecimalValue() throws -> Decimal {
-        let result = try calculated()
+        let result = try isSettledValue ? self : calculated()
         guard case let .operand(operand) = result.last,
               let value = operand.decimalValue else {
             throw CalculationError.invalidFormula

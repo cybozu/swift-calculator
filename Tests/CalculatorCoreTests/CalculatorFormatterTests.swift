@@ -32,6 +32,15 @@ struct CalculatorFormatterTests {
             tokens: [.operand(.init(1)), .operator(.subtraction), .operand(.init(3))],
             expectedString: "-2"
         ),
+        // A settled single value is formatted as is.
+        .init(
+            tokens: [.operand(.init(3))],
+            expectedString: "3"
+        ),
+        .init(
+            tokens: [.operator(.subtraction), .operand(.init(2))],
+            expectedString: "-2"
+        ),
         .init(
             tokens: [.operand(.init(1)), .operator(.addition)],
             expectedString: CalculationError.invalidFormula.localizedDescription
@@ -102,6 +111,15 @@ struct CalculatorFormatterTests {
             tokens: [.operand(.init(0.1)), .operator(.addition), .operand(.init(0.2))],
             expectedDecimalValue: 0.3
         ),
+        // A settled single value is returned as is.
+        .init(
+            tokens: [.operand(.init(3))],
+            expectedDecimalValue: 3
+        ),
+        .init(
+            tokens: [.operator(.subtraction), .operand(.init(2))],
+            expectedDecimalValue: -2
+        ),
     ] as [DecimalValueCondition])
     func calculatedDecimalValue(_ condition: DecimalValueCondition) throws {
         let actual = try condition.tokens.calculatedDecimalValue()
@@ -121,6 +139,16 @@ struct CalculatorFormatterTests {
         sut.handle(number: 1)
         sut.handle(operator: .addition)
         sut.handle(number: 2)
+        #expect(try sut.calculatedDecimalValue() == 3)
+    }
+
+    @Test
+    func engine_calculatedDecimalValue_after_equal() throws {
+        var sut = CalculatorEngine()
+        sut.handle(number: 1)
+        sut.handle(operator: .addition)
+        sut.handle(number: 2)
+        sut.handle(operator: .equal)
         #expect(try sut.calculatedDecimalValue() == 3)
     }
 }
