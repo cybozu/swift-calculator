@@ -1,6 +1,6 @@
 import Foundation
 
-enum Digit: Equatable, CustomStringConvertible {
+enum Digit: Equatable, Sendable, CustomStringConvertible {
     case number(Int)
     case period
 

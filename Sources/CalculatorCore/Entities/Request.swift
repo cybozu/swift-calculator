@@ -1,7 +1,7 @@
 import Foundation
 
 // TODO: Tokenにリネーム
-enum Request: Equatable, CustomStringConvertible {
+enum Request: Equatable, Sendable, CustomStringConvertible {
     case term(Term)
     case `operator`(Operator)
 

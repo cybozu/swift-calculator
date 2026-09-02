@@ -1,7 +1,7 @@
 import Foundation
 
 // TODO: Operandにリネーム
-public struct Term: Equatable, CustomStringConvertible {
+public struct Term: Equatable, Sendable, CustomStringConvertible {
     var digits: [Digit]
 
     public var description: String {

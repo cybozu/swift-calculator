@@ -1,6 +1,6 @@
 import Foundation
 
-struct SignedTerm: Equatable {
+struct SignedTerm: Equatable, Sendable {
     var value: Decimal
     var cost: Int
 }
