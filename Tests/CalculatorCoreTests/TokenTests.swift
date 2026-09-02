@@ -365,19 +365,18 @@ struct TokenTests {
             ],
             expectedTokens: [.operand(.init(2))]
         ),
-        // 1+1=5+3= -> a segment starting with an operand restarts the formula -> 8
+        // 1+1=+5= -> (1+1)+5 -> 7
         .init(
             tokens: [
                 .operand(.init(1)),
                 .operator(.addition),
                 .operand(.init(1)),
                 .operator(.equal),
-                .operand(.init(5)),
                 .operator(.addition),
-                .operand(.init(3)),
+                .operand(.init(5)),
                 .operator(.equal)
             ],
-            expectedTokens: [.operand(.init(8))]
+            expectedTokens: [.operand(.init(7))]
         ),
         // 1+1== -> an empty segment keeps the previous result -> 2
         .init(
@@ -416,6 +415,32 @@ struct TokenTests {
         // +1= -> a segment starting with an operator requires a previous result
         .init(
             tokens: [.operator(.addition), .operand(.init(1)), .operator(.equal)],
+            expectedError: .invalidFormula
+        ),
+        // 1+1=5= -> an operand must not follow a calculated result
+        .init(
+            tokens: [
+                .operand(.init(1)),
+                .operator(.addition),
+                .operand(.init(1)),
+                .operator(.equal),
+                .operand(.init(5)),
+                .operator(.equal)
+            ],
+            expectedError: .invalidFormula
+        ),
+        // 1+1=5+3= -> an operand must not follow a calculated result
+        .init(
+            tokens: [
+                .operand(.init(1)),
+                .operator(.addition),
+                .operand(.init(1)),
+                .operator(.equal),
+                .operand(.init(5)),
+                .operator(.addition),
+                .operand(.init(3)),
+                .operator(.equal)
+            ],
             expectedError: .invalidFormula
         ),
         // 6÷2=÷0= -> undefined

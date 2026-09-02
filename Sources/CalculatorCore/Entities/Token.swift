@@ -96,10 +96,14 @@ extension [Token] {
             guard let first = segment.first else {
                 continue
             }
-            let formula: [Token] = if case .operator = first {
-                (result ?? []) + segment
+            let formula: [Token]
+            if case .operator = first {
+                formula = (result ?? []) + segment
+            } else if result == nil {
+                formula = Array(segment)
             } else {
-                Array(segment)
+                // An operand must not follow a calculated result.
+                throw CalculationError.invalidFormula
             }
             result = try formula.calculatedFormula()
         }
