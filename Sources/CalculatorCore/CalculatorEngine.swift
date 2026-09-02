@@ -138,7 +138,7 @@ public struct CalculatorEngine {
         }
     }
 
-    public mutating func handleCalculate() {
+    mutating func handleCalculate() {
         do {
             tokens = try tokens.calculated()
             isEditingOperand = false
