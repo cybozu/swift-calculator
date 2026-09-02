@@ -21,6 +21,7 @@ public struct CalculatorEngine {
     public mutating func reset(with decimalValue: Decimal?) {
         requests = decimalValue.map([Request].init(decimalValue:)) ?? []
         isEditingTerm = false
+        error = nil
     }
 
     public mutating func handle(number input: Int) {
