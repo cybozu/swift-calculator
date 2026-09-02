@@ -5,12 +5,12 @@ import Testing
 @MainActor
 struct CalculatorStateTests {
     @Test
-    func onTap_calculate() {
+    func onTap_equal() {
         let sut = CalculatorState()
         sut.onTap(.number(1))
         sut.onTap(.operator(.addition))
         sut.onTap(.number(2))
-        sut.onTap(.command(.calculate))
+        sut.onTap(.operator(.equal))
         #expect(sut.expression == "3")
         #expect(!sut.isEditingOperand)
     }
@@ -59,7 +59,7 @@ struct CalculatorStateTests {
         sut.onTap(.number(1))
         sut.onTap(.operator(.division))
         sut.onTap(.number(0))
-        sut.onTap(.command(.calculate))
+        sut.onTap(.operator(.equal))
         #expect(sut.expression == CalculationError.undefined.localizedDescription)
     }
 
@@ -85,7 +85,7 @@ struct CalculatorStateTests {
         #expect(clearCommand(of: sut) == .clear)
         sut.onTap(.operator(.addition))
         sut.onTap(.number(2))
-        sut.onTap(.command(.calculate))
+        sut.onTap(.operator(.equal))
         #expect(clearCommand(of: sut) == .allClear)
     }
 

@@ -36,7 +36,7 @@ final class CalculatorState {
             .init(role: .command(.plusMinus)),
             .init(role: .number(0)),
             .init(role: .period),
-            .init(role: .command(.calculate)),
+            .init(role: .operator(.equal)),
         ]),
     ]
 
@@ -84,8 +84,6 @@ final class CalculatorState {
             switch value {
             case .plusMinus:
                 engine.handlePlusMinus()
-            case .calculate:
-                engine.handleCalculate()
             case .allClear:
                 engine.handleAllClear()
             case .clear:
