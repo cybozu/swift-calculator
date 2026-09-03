@@ -1661,6 +1661,22 @@ struct CalculatorEngineTests {
         #expect(sut.tokens == [.operand(.init(4))])
     }
 
+    @Test(arguments: [-1, 10, 42])
+    func handle_number_ignores_out_of_range_input(_ input: Int) {
+        var sut = CalculatorEngine()
+        sut.handle(number: input)
+        #expect(sut.tokens.isEmpty)
+    }
+
+    @Test
+    func reset_with_nan_falls_back_to_zero() {
+        var sut = CalculatorEngine()
+        sut.reset(with: .nan)
+        #expect(sut.expression == "0")
+        sut.handleDelete()
+        #expect(sut.tokens.isEmpty)
+    }
+
     @Test
     func handle_number_on_an_operand_marks_editing() {
         var sut = CalculatorEngine()

@@ -28,9 +28,10 @@ public enum Token: Equatable, Sendable, CustomStringConvertible {
 
 extension [Token] {
     /// Creates tokens that represent the given decimal value.
-    /// A negative value is represented by a subtraction operator followed by an operand.
+    /// A negative value is represented by a subtraction operator followed by an operand,
+    /// and a value without any digit representation, such as NaN, falls back to zero.
     public init(decimalValue: Decimal) {
-        self = if decimalValue.isSignMinus {
+        self = if decimalValue.isSignMinus, !decimalValue.isNaN {
             [.operator(.subtraction)]
         } else {
             []

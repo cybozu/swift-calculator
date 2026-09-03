@@ -23,8 +23,11 @@ public struct CalculatorEngine {
 
     /// Handles the input of a number button.
     /// - Parameters:
-    ///   - input: The number that was input.
+    ///   - input: The number that was input. A value outside the range 0...9 is ignored.
     public mutating func handle(number input: Int) {
+        guard (0 ... 9).contains(input) else {
+            return
+        }
         switch tokens.last {
         case var .operand(value):
             if value.digits == [.number(0)] {
