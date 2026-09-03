@@ -25,15 +25,23 @@ extension SignedOperand {
     // The truncating remainder: the result takes the sign of the dividend,
     // consistently with the % operator of Swift.
     func remainderValue(by: SignedOperand) -> Decimal {
-        let a = NSDecimalNumber(decimal: value).doubleValue
-        let b = NSDecimalNumber(decimal: by.value).doubleValue
-        return Decimal(a.truncatingRemainder(dividingBy: b)).roundingValue()
+        value.truncatingRemainder(dividingBy: by.value).roundingValue()
     }
 }
 
 private extension Decimal {
+    func truncatingRemainder(dividingBy divisor: Decimal) -> Decimal {
+        var quotient = self / divisor
+        var truncated = Decimal()
+        NSDecimalRound(&truncated, &quotient, 0, sign == divisor.sign ? .down : .up)
+        return self - truncated * divisor
+    }
+
+    // Rounds to 7 fraction digits without leaving the Decimal representation.
     func roundingValue() -> Decimal {
-        let v = NSDecimalNumber(decimal: self).doubleValue
-        return Decimal(round(v * 10000000)) / 10000000
+        var value = self
+        var result = Decimal()
+        NSDecimalRound(&result, &value, 7, .plain)
+        return result
     }
 }

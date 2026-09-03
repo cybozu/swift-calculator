@@ -363,6 +363,35 @@ struct TokenTests {
     }
 
     @Test(arguments: [
+        // Large values stay exact instead of being routed through Double.
+        .init(
+            tokens: [
+                .operand(.init(decimalValue: Decimal(string: "10000000000000001")!)),
+                .operator(.addition),
+                .operand(.init(1))
+            ],
+            expectedTokens: [.operand(.init(decimalValue: Decimal(string: "10000000000000002")!))]
+        ),
+        .init(
+            tokens: [.operand(.init(0.1)), .operator(.addition), .operand(.init(0.2))],
+            expectedTokens: [.operand(.init(0.3))]
+        ),
+        // The quotient is rounded to 7 fraction digits.
+        .init(
+            tokens: [.operand(.init(1)), .operator(.division), .operand(.init(3))],
+            expectedTokens: [.operand(.init(0.3333333))]
+        ),
+        .init(
+            tokens: [.operand(.init(0.3)), .operator(.modulus), .operand(.init(0.1))],
+            expectedTokens: [.operand(.init(0))]
+        ),
+    ] as [CalculatedCondition])
+    func calculated_precise_expression(_ condition: CalculatedCondition) throws {
+        let actual = try condition.tokens.calculated()
+        #expect(actual == condition.expectedTokens)
+    }
+
+    @Test(arguments: [
         // 1+1= -> 2
         .init(
             tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(1)), .operator(.equal)],
