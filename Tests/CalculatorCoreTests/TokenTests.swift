@@ -88,10 +88,11 @@ struct TokenTests {
             index: 3,
             expectedSignedOperand: .init(value: 2, cost: 1)
         ),
+        // The subtraction is a binary operator here, not the sign of 2.
         .init(
             tokens: [.operand(.init(1)), .operator(.subtraction), .operand(.init(2)), .operator(.addition), .operand(.init(3))],
             index: 3,
-            expectedSignedOperand: .init(value: -2, cost: 2)
+            expectedSignedOperand: .init(value: 2, cost: 1)
         ),
         .init(
             tokens: [.operand(.init(1)), .operator(.multiplication), .operator(.subtraction), .operand(.init(2))],
@@ -301,6 +302,61 @@ struct TokenTests {
         ),
     ] as [CalculatedCondition])
     func calculated_complicated_expression(_ condition: CalculatedCondition) throws {
+        let actual = try condition.tokens.calculated()
+        #expect(actual == condition.expectedTokens)
+    }
+
+    @Test(arguments: [
+        // 5-3×-2 -> 5-(-6) -> 11
+        .init(
+            tokens: [
+                .operand(.init(5)),
+                .operator(.subtraction),
+                .operand(.init(3)),
+                .operator(.multiplication),
+                .operator(.subtraction),
+                .operand(.init(2))
+            ],
+            expectedTokens: [.operand(.init(11))]
+        ),
+        // 5+3×-2 -> 5+(-6) -> -1
+        .init(
+            tokens: [
+                .operand(.init(5)),
+                .operator(.addition),
+                .operand(.init(3)),
+                .operator(.multiplication),
+                .operator(.subtraction),
+                .operand(.init(2))
+            ],
+            expectedTokens: [.operator(.subtraction), .operand(.init(1))]
+        ),
+        // 2×-3-1 -> (-6)-1 -> -7
+        .init(
+            tokens: [
+                .operand(.init(2)),
+                .operator(.multiplication),
+                .operator(.subtraction),
+                .operand(.init(3)),
+                .operator(.subtraction),
+                .operand(.init(1))
+            ],
+            expectedTokens: [.operator(.subtraction), .operand(.init(7))]
+        ),
+        // 6÷-3-1 -> (-2)-1 -> -3
+        .init(
+            tokens: [
+                .operand(.init(6)),
+                .operator(.division),
+                .operator(.subtraction),
+                .operand(.init(3)),
+                .operator(.subtraction),
+                .operand(.init(1))
+            ],
+            expectedTokens: [.operator(.subtraction), .operand(.init(3))]
+        ),
+    ] as [CalculatedCondition])
+    func calculated_binary_minus_expression(_ condition: CalculatedCondition) throws {
         let actual = try condition.tokens.calculated()
         #expect(actual == condition.expectedTokens)
     }

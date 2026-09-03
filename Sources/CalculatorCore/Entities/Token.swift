@@ -57,8 +57,10 @@ extension [Token] {
               let value = beforeOperand.decimalValue else {
             return nil
         }
+        // A subtraction preceded by an operand is a binary operator, not a sign.
         guard 1 < index,
-              case .operator(.subtraction) = self[index - 2] else {
+              case .operator(.subtraction) = self[index - 2],
+              index == 2 || !self[index - 3].isOperand else {
             return SignedOperand(value: value, cost: 1)
         }
         return SignedOperand(value: -value, cost: 2)
@@ -165,7 +167,7 @@ extension [Token] {
         ]
 
         for operation in operations {
-            while copy.count > 2, let index = copy.firstOperatorIndex(where: { $0 == .operator(operation.operator) }) {
+            while copy.count > 2, let index = copy.firstBinaryOperatorIndex(of: operation.operator) {
                 guard let beforeSignedOperand = copy.signedOperand(before: index),
                       let afterSignedOperand = copy.signedOperand(after: index) else {
                     throw CalculationError.invalidFormula
@@ -193,8 +195,12 @@ extension [Token] {
     }
 }
 
-extension Array {
-    func firstOperatorIndex(where predicate: (Element) throws -> Bool) rethrows -> Int? {
-        try dropFirst().map(\.self).firstIndex(where: predicate).map({ $0 + 1 })
+extension [Token] {
+    // A binary operator must be preceded by an operand; a subtraction that
+    // follows another operator is a sign consumed by signedOperand instead.
+    private func firstBinaryOperatorIndex(of operator: Operator) -> Int? {
+        indices.dropFirst().first { index in
+            self[index] == .operator(`operator`) && self[index - 1].isOperand
+        }
     }
 }
