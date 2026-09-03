@@ -164,6 +164,21 @@ struct CalculatorStateTests {
     }
 
     @Test
+    func operator_after_error_starts_from_zero() {
+        let sut = CalculatorState()
+        sut.onTap(.number(1))
+        sut.onTap(.operator(.division))
+        sut.onTap(.number(0))
+        sut.onTap(.operator(.equal))
+        sut.onTap(.operator(.addition))
+        #expect(sut.expression == "0+")
+        sut.onTap(.number(3))
+        sut.onTap(.operator(.equal))
+        #expect(sut.expression == "3")
+        #expect(sut.value == 3)
+    }
+
+    @Test
     func equal_on_a_single_operand_publishes_the_value() {
         let sut = CalculatorState()
         sut.onTap(.number(5))

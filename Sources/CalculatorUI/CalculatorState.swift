@@ -88,6 +88,7 @@ final class CalculatorState {
             discardSettledResult()
             engine.handlePeriod()
         case let .operator(value):
+            discardError()
             engine.handle(operator: value)
         case let .command(value):
             switch value {
@@ -105,6 +106,14 @@ final class CalculatorState {
 
     private func discardSettledResult() {
         if engine.error != nil || (engine.tokens.isSettledValue && !engine.isEditingOperand) {
+            engine.handleAllClear()
+        }
+    }
+
+    // An operator entered over an error message starts from a cleared state;
+    // otherwise the engine would grow tokens hidden behind the error text.
+    private func discardError() {
+        if engine.error != nil {
             engine.handleAllClear()
         }
     }
