@@ -5,14 +5,15 @@ public struct Calculator: View {
     @Environment(\.calculatorStyle) private var _calculatorStyle
     @State private var state = CalculatorState()
 
-    @Binding var value: String
+    @Binding var value: Decimal?
 
     /// Creates new calculator view.
     /// - Parameters:
-    ///   - value: The string value representing an expression or calculation result.
-    public init(value: Binding<String>) {
+    ///   - value: The decimal value settled by the calculator.
+    ///     It is nil while a formula is being edited or when the calculation failed.
+    public init(value: Binding<Decimal?>) {
         _value = value
-        state.setValue(value.wrappedValue)
+        state.value = value.wrappedValue
     }
 
     /// The content and behavior of the calculator view.
@@ -25,10 +26,10 @@ public struct Calculator: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("calculator")
         .onChange(of: value) { _, newValue in
-            guard state.expression != newValue else { return }
-            state.setValue(newValue)
+            guard state.value != newValue else { return }
+            state.value = newValue
         }
-        .onChange(of: state.expression, initial: true) { _, newValue in
+        .onChange(of: state.value, initial: true) { _, newValue in
             guard value != newValue else { return }
             value = newValue
         }

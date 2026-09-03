@@ -6,7 +6,7 @@ import Observation
 final class CalculatorState {
     private var engine = CalculatorEngine()
     private let formatter = CalculatorFormatter()
-    // The clear cell always declares allClear here; rows derives the actual role.
+
     private let baseRows: [Row] = [
         Row(cells: [
             .init(role: .command(.delete)),
@@ -40,7 +40,6 @@ final class CalculatorState {
         ]),
     ]
 
-    // Keeps the ids of baseRows so that the SwiftUI identities stay stable.
     var rows: [Row] {
         baseRows.map { row in
             var row = row
@@ -56,6 +55,18 @@ final class CalculatorState {
         }
     }
 
+    var value: Decimal? {
+        get {
+            guard !engine.isEditingOperand, engine.tokens.isSettledValue else {
+                return nil
+            }
+            return try? engine.tokens.calculatedDecimalValue()
+        }
+        set {
+            engine.reset(with: newValue)
+        }
+    }
+
     var expression: String {
         if let error = engine.error {
             error.localizedDescription
@@ -66,18 +77,6 @@ final class CalculatorState {
 
     var isEditingOperand: Bool {
         engine.isEditingOperand
-    }
-
-    func setValue(_ value: String) {
-        engine.reset(with: Decimal(string: value))
-    }
-
-    // Starting a new calculation over a settled result is a UI policy:
-    // the engine itself keeps appending to whatever tokens it holds.
-    private func discardSettledResult() {
-        if engine.error != nil || (engine.tokens.isSettledValue && !engine.isEditingOperand) {
-            engine.handleAllClear()
-        }
     }
 
     func onTap(_ role: Role) {
@@ -101,6 +100,12 @@ final class CalculatorState {
             case .delete:
                 engine.handleDelete()
             }
+        }
+    }
+
+    private func discardSettledResult() {
+        if engine.error != nil || (engine.tokens.isSettledValue && !engine.isEditingOperand) {
+            engine.handleAllClear()
         }
     }
 }

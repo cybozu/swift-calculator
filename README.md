@@ -37,7 +37,7 @@ import CalculatorUI
 import SwiftUI
 
 struct ContentView: View {
-    @State var value: String = ""
+    @State var value: Decimal?
 
     var body: some View {
         Calculator(value: $value)
@@ -85,7 +85,7 @@ extension CalculatorStyle where Self == CustomCalculatorStyle {
 }
 
 struct ContentView: View {
-    @State var value: String = ""
+    @State var value: Decimal?
 
     var body: some View {
         Calculator(value: $value)

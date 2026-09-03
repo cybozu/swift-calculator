@@ -65,17 +65,34 @@ struct CalculatorStateTests {
     }
 
     @Test
-    func setValue_with_decimal_string() {
+    func setValue_with_decimal_value() {
         let sut = CalculatorState()
-        sut.setValue("-1.5")
+        sut.value = -1.5
+        #expect(sut.value == -1.5)
         #expect(sut.expression == "-1.5")
     }
 
     @Test
-    func setValue_with_invalid_string() {
+    func setValue_with_nil() {
         let sut = CalculatorState()
-        sut.setValue("abc")
+        sut.value = 3
+        sut.value = nil
+        #expect(sut.value == nil)
         #expect(sut.expression == "0")
+    }
+
+    @Test
+    func decimalValue_is_published_only_when_settled() {
+        let sut = CalculatorState()
+        #expect(sut.value == nil)
+        sut.onTap(.number(1))
+        sut.onTap(.operator(.addition))
+        sut.onTap(.number(2))
+        #expect(sut.value == nil)
+        sut.onTap(.operator(.equal))
+        #expect(sut.value == 3)
+        sut.onTap(.number(5))
+        #expect(sut.value == nil)
     }
 
     @Test
