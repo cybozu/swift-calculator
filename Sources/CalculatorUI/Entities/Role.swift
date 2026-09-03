@@ -3,9 +3,13 @@ import SwiftUI
 
 /// A type that represents the calculation role.
 public enum Role: Sendable {
+    /// The role that inputs a number.
     case number(Int)
+    /// The role that inputs a decimal period.
     case period
+    /// The role that inputs a calculation operator.
     case `operator`(Operator)
+    /// The role that executes a calculation command.
     case command(Command)
 
     /// A text describing the content of calculation role.

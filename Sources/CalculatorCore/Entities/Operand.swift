@@ -1,8 +1,10 @@
 import Foundation
 
+/// A type that represents an operand of the calculation formula.
 public struct Operand: Equatable, Sendable, CustomStringConvertible {
     var digits: [Digit]
 
+    /// A string that represents the operand.
     public var description: String {
         digits.map(String.init(describing:)).joined()
     }

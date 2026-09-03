@@ -2,9 +2,13 @@ import SwiftUI
 
 /// A type that represents the calculation command.
 public enum Command: String, Sendable, CaseIterable {
+    /// The command that toggles the sign of the operand.
     case plusMinus
+    /// The command that clears all input.
     case allClear
+    /// The command that clears the operand under editing.
     case clear
+    /// The command that deletes the last input.
     case delete
 
     /// A text describing the calculation command.

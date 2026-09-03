@@ -6,7 +6,7 @@ extension View {
     /// Use this modifier to set a specific style for calculator view instances within a view:
     ///
     /// ```swift
-    /// Calculator()
+    /// Calculator(value: $value)
     ///     .calculatorStyle(.classic())
     /// ```
     public func calculatorStyle(_ style: some CalculatorStyle) -> some View {

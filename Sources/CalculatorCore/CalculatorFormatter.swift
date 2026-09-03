@@ -2,6 +2,7 @@ import Foundation
 
 /// A formatter that converts calculation tokens into their textual representations.
 public struct CalculatorFormatter: Sendable {
+    /// Creates a new calculator formatter.
     public init() {}
 
     /// Returns a string containing the calculated result of the given tokens,

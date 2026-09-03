@@ -1,20 +1,29 @@
 import Foundation
 
+/// A state machine that builds calculation tokens from calculator button inputs.
 public struct CalculatorEngine {
     /// The tokens that represent the formula under editing.
     public internal(set) var tokens = [Token]()
     /// The error that occurred in the last calculation, or `nil` when there is no error.
     public internal(set) var error: CalculationError?
+    /// Whether the last operand in the tokens is being edited.
     public internal(set) var isEditingOperand = false
 
+    /// Creates a new calculator engine.
     public init() {}
 
+    /// Resets the tokens with the given decimal value.
+    /// - Parameters:
+    ///   - decimalValue: The value to seed the tokens with, or `nil` to empty them.
     public mutating func reset(with decimalValue: Decimal?) {
         tokens = decimalValue.map([Token].init(decimalValue:)) ?? []
         isEditingOperand = false
         error = nil
     }
 
+    /// Handles the input of a number button.
+    /// - Parameters:
+    ///   - input: The number that was input.
     public mutating func handle(number input: Int) {
         switch tokens.last {
         case var .operand(value):
@@ -33,6 +42,7 @@ public struct CalculatorEngine {
         }
     }
 
+    /// Handles the input of the period button.
     public mutating func handlePeriod() {
         switch tokens.last {
         case var .operand(value):
@@ -47,6 +57,10 @@ public struct CalculatorEngine {
         }
     }
 
+    /// Handles the input of an operator button.
+    /// Passing ``Operator/equal`` calculates the current tokens.
+    /// - Parameters:
+    ///   - input: The operator that was input.
     public mutating func handle(operator input: Operator) {
         guard input != .equal else {
             handleCalculate()
@@ -91,6 +105,7 @@ public struct CalculatorEngine {
         }
     }
 
+    /// Handles the input of the plus-minus button, toggling the sign of the last operand.
     public mutating func handlePlusMinus() {
         guard case .operand = tokens.last else {
             return
@@ -150,11 +165,13 @@ public struct CalculatorEngine {
         }
     }
 
+    /// Handles the input of the all-clear button, removing all tokens and the error.
     public mutating func handleAllClear() {
         tokens.removeAll()
         error = nil
     }
 
+    /// Handles the input of the clear button, removing the operand under editing.
     public mutating func handleClear() {
         if case .operand = tokens.last {
             tokens.removeLast()
@@ -162,6 +179,7 @@ public struct CalculatorEngine {
         isEditingOperand = false
     }
 
+    /// Handles the input of the delete button, removing the last digit or operator.
     public mutating func handleDelete() {
         switch tokens.last {
         case var .operand(value):

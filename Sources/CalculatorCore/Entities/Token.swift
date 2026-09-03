@@ -2,7 +2,9 @@ import Foundation
 
 /// A type that represents an element of the calculation formula.
 public enum Token: Equatable, Sendable, CustomStringConvertible {
+    /// An operand of the formula.
     case operand(Operand)
+    /// An operator of the formula.
     case `operator`(Operator)
 
     /// A string that represents the token.
