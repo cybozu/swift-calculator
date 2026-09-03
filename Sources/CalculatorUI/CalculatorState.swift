@@ -110,8 +110,8 @@ final class CalculatorState {
         }
     }
 
-    // An operator entered over an error message starts from a cleared state;
-    // otherwise the engine would grow tokens hidden behind the error text.
+    // Without this, an operator entered over an error message would grow
+    // tokens hidden behind the error text.
     private func discardError() {
         if engine.error != nil {
             engine.handleAllClear()

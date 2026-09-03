@@ -30,8 +30,7 @@ extension Digit {
 extension [Digit] {
     init(decimalValue: Decimal) {
         self = String(describing: decimalValue).compactMap(Digit.init)
-        // A value without any digit representation, such as NaN, falls back to zero
-        // so that an operand never holds an empty digit sequence.
+        // An operand must not hold an empty digit sequence, so NaN falls back to zero.
         if isEmpty {
             self = [.number(0)]
         }

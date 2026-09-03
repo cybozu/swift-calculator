@@ -22,8 +22,6 @@ extension SignedOperand {
         (value / by.value).roundingValue()
     }
 
-    // The truncating remainder: the result takes the sign of the dividend,
-    // consistently with the % operator of Swift.
     func remainderValue(by: SignedOperand) -> Decimal {
         value.truncatingRemainder(dividingBy: by.value).roundingValue()
     }
@@ -37,7 +35,6 @@ private extension Decimal {
         return self - truncated * divisor
     }
 
-    // Rounds to 7 fraction digits without leaving the Decimal representation.
     func roundingValue() -> Decimal {
         var value = self
         var result = Decimal()

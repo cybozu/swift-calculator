@@ -113,8 +113,6 @@ extension [Token] {
         var result: [Token]?
         for segment in split(separator: .operator(.equal), omittingEmptySubsequences: false) {
             guard let first = segment.first else {
-                // An empty segment keeps the previous result,
-                // but an equal sign without a formula before it is invalid.
                 guard result != nil else {
                     throw CalculationError.invalidFormula
                 }
@@ -201,8 +199,7 @@ extension [Token] {
 }
 
 extension [Token] {
-    // A binary operator must be preceded by an operand; a subtraction that
-    // follows another operator is a sign consumed by signedOperand instead.
+    // A subtraction that follows another operator is a sign, not a binary operator.
     private func firstBinaryOperatorIndex(of operator: Operator) -> Int? {
         indices.dropFirst().first { index in
             self[index] == .operator(`operator`) && self[index - 1].isOperand
