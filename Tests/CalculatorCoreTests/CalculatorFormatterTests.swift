@@ -6,6 +6,10 @@ import Testing
 struct CalculatorFormatterTests {
     @Test(arguments: [
         .init(
+            tokens: [],
+            expectedString: "0"
+        ),
+        .init(
             tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(1))],
             expectedString: "2"
         ),

@@ -7,7 +7,11 @@ public struct CalculatorFormatter: Sendable {
 
     /// Returns a string containing the calculated result of the given tokens,
     /// or a localized error description when the calculation fails.
+    /// Empty tokens are formatted as "0".
     public func string(from tokens: [Token]) -> String {
+        guard !tokens.isEmpty else {
+            return "0"
+        }
         do {
             let result = try tokens.isSettledValue ? tokens : tokens.calculated()
             return result.map(String.init(describing:)).joined()
