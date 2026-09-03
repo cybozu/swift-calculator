@@ -16,7 +16,7 @@ public struct CalculatorFormatter: Sendable {
             let result = try tokens.isSettledValue ? tokens : tokens.calculated()
             return result.map(String.init(describing:)).joined()
         } catch {
-            let calculationError = error as? CalculationError ?? .invalidFormula
+            let calculationError = error as? CalculationError ?? .invalidFormula(.incompleteFormula)
             return calculationError.localizedDescription
         }
     }

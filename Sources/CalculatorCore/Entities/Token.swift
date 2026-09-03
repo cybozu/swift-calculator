@@ -104,17 +104,20 @@ extension [Token] {
         let result = try isSettledValue ? self : calculated()
         guard case let .operand(operand) = result.last,
               let value = operand.decimalValue else {
-            throw CalculationError.invalidFormula
+            throw CalculationError.invalidFormula(.incompleteFormula)
         }
         return result.count == 2 ? -value : value
     }
 
     func calculated() throws -> [Token] {
+        guard !isEmpty else {
+            throw CalculationError.invalidFormula(.incompleteFormula)
+        }
         var result: [Token]?
         for segment in split(separator: .operator(.equal), omittingEmptySubsequences: false) {
             guard let first = segment.first else {
                 guard result != nil else {
-                    throw CalculationError.invalidFormula
+                    throw CalculationError.invalidFormula(.equalWithoutFormula)
                 }
                 continue
             }
@@ -124,20 +127,19 @@ extension [Token] {
             } else if result == nil {
                 formula = Array(segment)
             } else {
-                // An operand must not follow a calculated result.
-                throw CalculationError.invalidFormula
+                throw CalculationError.invalidFormula(.operandAfterResult)
             }
             result = try formula.calculatedFormula()
         }
         guard let result else {
-            throw CalculationError.invalidFormula
+            throw CalculationError.invalidFormula(.incompleteFormula)
         }
         return result
     }
 
     private func calculatedFormula() throws -> [Token] {
         guard count >= 3 else {
-            throw CalculationError.invalidFormula
+            throw CalculationError.invalidFormula(.incompleteFormula)
         }
         var copy = self
 
@@ -173,7 +175,7 @@ extension [Token] {
             while copy.count > 2, let index = copy.firstBinaryOperatorIndex(of: operation.operator) {
                 guard let beforeSignedOperand = copy.signedOperand(before: index),
                       let afterSignedOperand = copy.signedOperand(after: index) else {
-                    throw CalculationError.invalidFormula
+                    throw CalculationError.invalidFormula(.incompleteFormula)
                 }
                 if operation.needsZeroValidation {
                     guard !afterSignedOperand.value.isZero else {

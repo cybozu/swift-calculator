@@ -204,27 +204,27 @@ struct TokenTests {
     @Test(arguments: [
         .init(
             tokens: [],
-            expectedError: .invalidFormula
+            expectedError: .invalidFormula(.incompleteFormula)
         ),
         .init(
             tokens: [.operand(.init(1))],
-            expectedError: .invalidFormula
+            expectedError: .invalidFormula(.incompleteFormula)
         ),
         .init(
             tokens: [.operator(.subtraction)],
-            expectedError: .invalidFormula
+            expectedError: .invalidFormula(.incompleteFormula)
         ),
         .init(
             tokens: [.operator(.subtraction), .operand(.init(1))],
-            expectedError: .invalidFormula
+            expectedError: .invalidFormula(.incompleteFormula)
         ),
         .init(
             tokens: [.operand(.init(1)), .operator(.addition)],
-            expectedError: .invalidFormula
+            expectedError: .invalidFormula(.incompleteFormula)
         ),
         .init(
             tokens: [.operand(.init(1)), .operator(.multiplication), .operator(.division)],
-            expectedError: .invalidFormula
+            expectedError: .invalidFormula(.incompleteFormula)
         ),
         .init(
             tokens: [.operand(.init(1)), .operator(.division), .operand(.init(0))],
@@ -497,19 +497,19 @@ struct TokenTests {
     @Test(arguments: [
         .init(
             tokens: [.operator(.equal)],
-            expectedError: .invalidFormula
+            expectedError: .invalidFormula(.equalWithoutFormula)
         ),
-        // +1= -> a segment starting with an operator requires a previous result
+        // +1=
         .init(
             tokens: [.operator(.addition), .operand(.init(1)), .operator(.equal)],
-            expectedError: .invalidFormula
+            expectedError: .invalidFormula(.incompleteFormula)
         ),
-        // =1+1 -> an equal sign without a formula before it is invalid
+        // =1+1
         .init(
             tokens: [.operator(.equal), .operand(.init(1)), .operator(.addition), .operand(.init(1))],
-            expectedError: .invalidFormula
+            expectedError: .invalidFormula(.equalWithoutFormula)
         ),
-        // 1+1=5= -> an operand must not follow a calculated result
+        // 1+1=5=
         .init(
             tokens: [
                 .operand(.init(1)),
@@ -519,9 +519,9 @@ struct TokenTests {
                 .operand(.init(5)),
                 .operator(.equal)
             ],
-            expectedError: .invalidFormula
+            expectedError: .invalidFormula(.operandAfterResult)
         ),
-        // 1+1=5+3= -> an operand must not follow a calculated result
+        // 1+1=5+3=
         .init(
             tokens: [
                 .operand(.init(1)),
@@ -533,7 +533,7 @@ struct TokenTests {
                 .operand(.init(3)),
                 .operator(.equal)
             ],
-            expectedError: .invalidFormula
+            expectedError: .invalidFormula(.operandAfterResult)
         ),
         // 6÷2=÷0= -> undefined
         .init(

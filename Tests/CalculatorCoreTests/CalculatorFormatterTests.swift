@@ -48,7 +48,7 @@ struct CalculatorFormatterTests {
         ),
         .init(
             tokens: [.operand(.init(1)), .operator(.addition)],
-            expectedString: CalculationError.invalidFormula.localizedDescription
+            expectedString: CalculationError.invalidFormula(.incompleteFormula).localizedDescription
         ),
         .init(
             tokens: [.operand(.init(1)), .operator(.division), .operand(.init(0))],
@@ -133,7 +133,7 @@ struct CalculatorFormatterTests {
 
     @Test
     func calculatedDecimalValue_error() {
-        #expect(throws: CalculationError.invalidFormula) {
+        #expect(throws: CalculationError.invalidFormula(.incompleteFormula)) {
             try [Token]().calculatedDecimalValue()
         }
     }
