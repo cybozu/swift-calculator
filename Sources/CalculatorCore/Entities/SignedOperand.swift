@@ -22,17 +22,12 @@ extension SignedOperand {
         (value / by.value).roundingValue()
     }
 
+    // The truncating remainder: the result takes the sign of the dividend,
+    // consistently with the % operator of Swift.
     func remainderValue(by: SignedOperand) -> Decimal {
         let a = NSDecimalNumber(decimal: value).doubleValue
         let b = NSDecimalNumber(decimal: by.value).doubleValue
-        let c = if a * b > .zero {
-            a.truncatingRemainder(dividingBy: b)
-        } else if a * b < .zero {
-            a.remainder(dividingBy: b)
-        } else {
-            Double.zero
-        }
-        return Decimal(c).roundingValue()
+        return Decimal(a.truncatingRemainder(dividingBy: b)).roundingValue()
     }
 }
 

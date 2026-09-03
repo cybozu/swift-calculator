@@ -8,7 +8,7 @@ public enum Operator: String, Sendable, CaseIterable, CustomStringConvertible {
     case multiplication
     /// The division operator (÷).
     case division
-    /// The modulus operator (%).
+    /// The modulus operator (%). The result takes the sign of the dividend.
     case modulus
     /// The equal sign (=) that folds the formula before it into a result.
     case equal

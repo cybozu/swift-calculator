@@ -182,13 +182,14 @@ struct TokenTests {
             tokens: [.operand(.init(3.5)), .operator(.modulus), .operand(.init(2))],
             expectedTokens: [.operand(.init(1.5))]
         ),
+        // The remainder takes the sign of the dividend.
         .init(
             tokens: [.operator(.subtraction), .operand(.init(3.5)), .operator(.modulus), .operand(.init(2))],
-            expectedTokens: [.operand(.init(0.5))]
+            expectedTokens: [.operator(.subtraction), .operand(.init(1.5))]
         ),
         .init(
             tokens: [.operand(.init(3.5)), .operator(.modulus), .operator(.subtraction), .operand(.init(2))],
-            expectedTokens: [.operator(.subtraction), .operand(.init(0.5))]
+            expectedTokens: [.operand(.init(1.5))]
         ),
         .init(
             tokens: [.operator(.subtraction), .operand(.init(3.5)), .operator(.modulus), .operator(.subtraction), .operand(.init(2))],
