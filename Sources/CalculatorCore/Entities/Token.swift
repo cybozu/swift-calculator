@@ -113,6 +113,11 @@ extension [Token] {
         var result: [Token]?
         for segment in split(separator: .operator(.equal), omittingEmptySubsequences: false) {
             guard let first = segment.first else {
+                // An empty segment keeps the previous result,
+                // but an equal sign without a formula before it is invalid.
+                guard result != nil else {
+                    throw CalculationError.invalidFormula
+                }
                 continue
             }
             let formula: [Token]

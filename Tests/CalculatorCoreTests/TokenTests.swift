@@ -504,6 +504,11 @@ struct TokenTests {
             tokens: [.operator(.addition), .operand(.init(1)), .operator(.equal)],
             expectedError: .invalidFormula
         ),
+        // =1+1 -> an equal sign without a formula before it is invalid
+        .init(
+            tokens: [.operator(.equal), .operand(.init(1)), .operator(.addition), .operand(.init(1))],
+            expectedError: .invalidFormula
+        ),
         // 1+1=5= -> an operand must not follow a calculated result
         .init(
             tokens: [
