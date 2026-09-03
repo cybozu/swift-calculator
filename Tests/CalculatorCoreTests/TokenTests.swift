@@ -88,7 +88,6 @@ struct TokenTests {
             index: 3,
             expectedSignedOperand: .init(value: 2, cost: 1)
         ),
-        // The subtraction is a binary operator here, not the sign of 2.
         .init(
             tokens: [.operand(.init(1)), .operator(.subtraction), .operand(.init(2)), .operator(.addition), .operand(.init(3))],
             index: 3,
@@ -182,7 +181,6 @@ struct TokenTests {
             tokens: [.operand(.init(3.5)), .operator(.modulus), .operand(.init(2))],
             expectedTokens: [.operand(.init(1.5))]
         ),
-        // The remainder takes the sign of the dividend.
         .init(
             tokens: [.operator(.subtraction), .operand(.init(3.5)), .operator(.modulus), .operand(.init(2))],
             expectedTokens: [.operator(.subtraction), .operand(.init(1.5))]
@@ -308,7 +306,6 @@ struct TokenTests {
     }
 
     @Test(arguments: [
-        // 5-3×-2 -> 5-(-6) -> 11
         .init(
             tokens: [
                 .operand(.init(5)),
@@ -320,7 +317,6 @@ struct TokenTests {
             ],
             expectedTokens: [.operand(.init(11))]
         ),
-        // 5+3×-2 -> 5+(-6) -> -1
         .init(
             tokens: [
                 .operand(.init(5)),
@@ -332,7 +328,6 @@ struct TokenTests {
             ],
             expectedTokens: [.operator(.subtraction), .operand(.init(1))]
         ),
-        // 2×-3-1 -> (-6)-1 -> -7
         .init(
             tokens: [
                 .operand(.init(2)),
@@ -344,7 +339,6 @@ struct TokenTests {
             ],
             expectedTokens: [.operator(.subtraction), .operand(.init(7))]
         ),
-        // 6÷-3-1 -> (-2)-1 -> -3
         .init(
             tokens: [
                 .operand(.init(6)),
@@ -363,7 +357,6 @@ struct TokenTests {
     }
 
     @Test(arguments: [
-        // Large values stay exact instead of being routed through Double.
         .init(
             tokens: [
                 .operand(.init(decimalValue: Decimal(string: "10000000000000001")!)),
@@ -376,7 +369,6 @@ struct TokenTests {
             tokens: [.operand(.init(0.1)), .operator(.addition), .operand(.init(0.2))],
             expectedTokens: [.operand(.init(0.3))]
         ),
-        // The quotient is rounded to 7 fraction digits.
         .init(
             tokens: [.operand(.init(1)), .operator(.division), .operand(.init(3))],
             expectedTokens: [.operand(.init(0.3333333))]
@@ -392,12 +384,10 @@ struct TokenTests {
     }
 
     @Test(arguments: [
-        // 1+1= -> 2
         .init(
             tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(1)), .operator(.equal)],
             expectedTokens: [.operand(.init(2))]
         ),
-        // 1+1=+1=+1= -> ((1+1)+1)+1 -> 4
         .init(
             tokens: [
                 .operand(.init(1)),
@@ -413,7 +403,6 @@ struct TokenTests {
             ],
             expectedTokens: [.operand(.init(4))]
         ),
-        // 1+1=-1= -> (1+1)-1 -> 1
         .init(
             tokens: [
                 .operand(.init(1)),
@@ -426,7 +415,6 @@ struct TokenTests {
             ],
             expectedTokens: [.operand(.init(1))]
         ),
-        // 1-3=+1= -> (1-3)+1 -> -1
         .init(
             tokens: [
                 .operand(.init(1)),
@@ -439,7 +427,6 @@ struct TokenTests {
             ],
             expectedTokens: [.operator(.subtraction), .operand(.init(1))]
         ),
-        // 2×3=%4= -> (2×3)%4 -> 2
         .init(
             tokens: [
                 .operand(.init(2)),
@@ -452,7 +439,6 @@ struct TokenTests {
             ],
             expectedTokens: [.operand(.init(2))]
         ),
-        // 1+1=+5= -> (1+1)+5 -> 7
         .init(
             tokens: [
                 .operand(.init(1)),
@@ -465,7 +451,6 @@ struct TokenTests {
             ],
             expectedTokens: [.operand(.init(7))]
         ),
-        // 1+1== -> an empty segment keeps the previous result -> 2
         .init(
             tokens: [
                 .operand(.init(1)),
@@ -476,7 +461,6 @@ struct TokenTests {
             ],
             expectedTokens: [.operand(.init(2))]
         ),
-        // 1+1=+1 (without trailing equal) -> 3
         .init(
             tokens: [
                 .operand(.init(1)),
@@ -499,17 +483,14 @@ struct TokenTests {
             tokens: [.operator(.equal)],
             expectedError: .invalidFormula(.equalWithoutFormula)
         ),
-        // +1=
         .init(
             tokens: [.operator(.addition), .operand(.init(1)), .operator(.equal)],
             expectedError: .invalidFormula(.incompleteFormula)
         ),
-        // =1+1
         .init(
             tokens: [.operator(.equal), .operand(.init(1)), .operator(.addition), .operand(.init(1))],
             expectedError: .invalidFormula(.equalWithoutFormula)
         ),
-        // 1+1=5=
         .init(
             tokens: [
                 .operand(.init(1)),
@@ -521,7 +502,6 @@ struct TokenTests {
             ],
             expectedError: .invalidFormula(.operandAfterResult)
         ),
-        // 1+1=5+3=
         .init(
             tokens: [
                 .operand(.init(1)),
@@ -535,7 +515,6 @@ struct TokenTests {
             ],
             expectedError: .invalidFormula(.operandAfterResult)
         ),
-        // 6÷2=÷0= -> undefined
         .init(
             tokens: [
                 .operand(.init(6)),

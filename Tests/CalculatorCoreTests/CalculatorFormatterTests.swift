@@ -17,7 +17,6 @@ struct CalculatorFormatterTests {
             tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(1)), .operator(.equal)],
             expectedString: "2"
         ),
-        // 1+1=+1=+1= -> ((1+1)+1)+1 -> 4
         .init(
             tokens: [
                 .operand(.init(1)),
@@ -37,7 +36,6 @@ struct CalculatorFormatterTests {
             tokens: [.operand(.init(1)), .operator(.subtraction), .operand(.init(3))],
             expectedString: "-2"
         ),
-        // A settled single value is formatted as is.
         .init(
             tokens: [.operand(.init(3))],
             expectedString: "3"
@@ -116,7 +114,6 @@ struct CalculatorFormatterTests {
             tokens: [.operand(.init(0.1)), .operator(.addition), .operand(.init(0.2))],
             expectedDecimalValue: 0.3
         ),
-        // A settled single value is returned as is.
         .init(
             tokens: [.operand(.init(3))],
             expectedDecimalValue: 3

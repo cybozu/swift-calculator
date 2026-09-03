@@ -1605,7 +1605,6 @@ struct CalculatorEngineTests {
     }
 
     @Test(arguments: [
-        // A lone settled value is confirmed by the equal input without calculation.
         .init(
             premise: .init(
                 isEditingOperand: true,
@@ -1628,7 +1627,6 @@ struct CalculatorEngineTests {
                 expression: "-5"
             )
         ),
-        // An incomplete formula is left as it is.
         .init(
             premise: .init(
                 isEditingOperand: true,
