@@ -33,6 +33,7 @@ public struct CalculatorEngine {
                 value.digits.append(.number(input))
             }
             tokens[tokens.count - 1] = .operand(value)
+            isEditingOperand = true
         case .operator:
             tokens.append(.operand(.init(digits: [.number(input)])))
             isEditingOperand = true
@@ -51,6 +52,7 @@ public struct CalculatorEngine {
             }
             value.digits.append(.period)
             tokens[tokens.count - 1] = .operand(value)
+            isEditingOperand = true
         case .operator, .none:
             tokens.append(.operand(.init(digits: [.number(0), .period])))
             isEditingOperand = true
@@ -151,6 +153,7 @@ public struct CalculatorEngine {
         do {
             tokens = try tokens.calculated()
             isEditingOperand = false
+            error = nil
         } catch let error as CalculationError {
             switch error {
             case .undefined:
@@ -158,7 +161,11 @@ public struct CalculatorEngine {
                 tokens.removeAll()
                 isEditingOperand = false
             case .invalidFormula:
-                break
+                // A lone settled value is not a calculable formula,
+                // but the equal input confirms it as the result.
+                if tokens.isSettledValue {
+                    isEditingOperand = false
+                }
             }
         } catch {
             fatalError("Error: \(error.localizedDescription)")
@@ -168,6 +175,7 @@ public struct CalculatorEngine {
     /// Handles the input of the all-clear button, removing all tokens and the error.
     public mutating func handleAllClear() {
         tokens.removeAll()
+        isEditingOperand = false
         error = nil
     }
 
@@ -194,8 +202,10 @@ public struct CalculatorEngine {
         case .none:
             return
         }
-        if tokens.isEmpty {
-            isEditingOperand = false
+        isEditingOperand = if case .operand = tokens.last {
+            true
+        } else {
+            false
         }
     }
 }

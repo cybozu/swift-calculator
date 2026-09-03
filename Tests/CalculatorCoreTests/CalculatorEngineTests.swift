@@ -1604,12 +1604,86 @@ struct CalculatorEngineTests {
         #expect(sut.expression == "2")
     }
 
+    @Test(arguments: [
+        // A lone settled value is confirmed by the equal input without calculation.
+        .init(
+            premise: .init(
+                isEditingOperand: true,
+                tokens: [.operand(.init(5))]
+            ),
+            expect: .init(
+                isEditingOperand: false,
+                tokens: [.operand(.init(5))],
+                expression: "5"
+            )
+        ),
+        .init(
+            premise: .init(
+                isEditingOperand: true,
+                tokens: [.operator(.subtraction), .operand(.init(5))]
+            ),
+            expect: .init(
+                isEditingOperand: false,
+                tokens: [.operator(.subtraction), .operand(.init(5))],
+                expression: "-5"
+            )
+        ),
+        // An incomplete formula is left as it is.
+        .init(
+            premise: .init(
+                isEditingOperand: true,
+                tokens: [.operand(.init(1)), .operator(.addition)]
+            ),
+            expect: .init(
+                isEditingOperand: true,
+                tokens: [.operand(.init(1)), .operator(.addition)],
+                expression: "1+"
+            )
+        ),
+    ] as [Condition])
+    func handle_calculate_settles_a_lone_operand(_ condition: Condition) {
+        var sut = CalculatorEngine()
+        sut.isEditingOperand = condition.premise.isEditingOperand
+        sut.tokens = condition.premise.tokens
+        sut.handleCalculate()
+        #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
+        #expect(sut.tokens == condition.expect.tokens)
+        #expect(sut.expression == condition.expect.expression)
+    }
+
+    @Test
+    func handle_calculate_clears_a_stale_error() {
+        var sut = CalculatorEngine()
+        sut.error = .undefined
+        sut.tokens = [.operand(.init(2)), .operator(.addition), .operand(.init(2))]
+        sut.handleCalculate()
+        #expect(sut.error == nil)
+        #expect(sut.tokens == [.operand(.init(4))])
+    }
+
+    @Test
+    func handle_number_on_an_operand_marks_editing() {
+        var sut = CalculatorEngine()
+        sut.tokens = [.operand(.init(12))]
+        sut.handle(number: 5)
+        #expect(sut.isEditingOperand)
+        #expect(sut.tokens == [.operand(.init(125))])
+    }
+
+    @Test
+    func handle_delete_on_an_operand_marks_editing() {
+        var sut = CalculatorEngine()
+        sut.tokens = [.operand(.init(12))]
+        sut.handleDelete()
+        #expect(sut.isEditingOperand)
+        #expect(sut.tokens == [.operand(.init(1))])
+    }
+
     @Test
     func handle_all_clear() {
         var sut = CalculatorEngine()
         sut.isEditingOperand = true
         sut.tokens = [.operand(.init(1)), .operator(.addition), .operand(.init(1))]
-        sut.handleClear()
         sut.handleAllClear()
         #expect(!sut.isEditingOperand)
         #expect(sut.tokens.isEmpty)

@@ -164,6 +164,29 @@ struct CalculatorStateTests {
     }
 
     @Test
+    func equal_on_a_single_operand_publishes_the_value() {
+        let sut = CalculatorState()
+        sut.onTap(.number(5))
+        #expect(sut.value == nil)
+        sut.onTap(.operator(.equal))
+        #expect(sut.value == 5)
+        #expect(clearCommand(of: sut) == .allClear)
+    }
+
+    @Test
+    func delete_after_settled_result_continues_editing() {
+        let sut = CalculatorState()
+        sut.onTap(.number(6))
+        sut.onTap(.operator(.multiplication))
+        sut.onTap(.number(2))
+        sut.onTap(.operator(.equal))
+        sut.onTap(.command(.delete))
+        #expect(sut.value == nil)
+        sut.onTap(.number(5))
+        #expect(sut.expression == "15")
+    }
+
+    @Test
     func rows_keep_stable_identifiers() {
         let sut = CalculatorState()
         let before = sut.rows.flatMap { [$0.id] + $0.cells.map(\.id) }
