@@ -1,6 +1,7 @@
 import CalculatorCore
-@testable import CalculatorUI
 import Testing
+
+@testable import CalculatorUI
 
 @MainActor
 struct CalculatorStateTests {

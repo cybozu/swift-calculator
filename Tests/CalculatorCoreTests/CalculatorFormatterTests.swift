@@ -1,6 +1,7 @@
-@testable import CalculatorCore
 import Foundation
 import Testing
+
+@testable import CalculatorCore
 
 struct CalculatorFormatterTests {
     @Test(arguments: [

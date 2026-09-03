@@ -1,5 +1,6 @@
-@testable import CalculatorCore
 import Testing
+
+@testable import CalculatorCore
 
 struct DigitTests {
     @Test(arguments: [
