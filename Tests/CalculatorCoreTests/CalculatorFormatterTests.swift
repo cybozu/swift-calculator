@@ -10,46 +10,35 @@ struct CalculatorFormatterTests {
             expectedString: "0"
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(1))],
+            tokens: .init("1+1"),
             expectedString: "2"
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(1)), .operator(.equal)],
+            tokens: .init("1+1="),
             expectedString: "2"
         ),
         .init(
-            tokens: [
-                .operand(.init(1)),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal)
-            ],
+            tokens: .init("1+1=+1=+1="),
             expectedString: "4"
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.subtraction), .operand(.init(3))],
+            tokens: .init("1-3"),
             expectedString: "-2"
         ),
         .init(
-            tokens: [.operand(.init(3))],
+            tokens: .init("3"),
             expectedString: "3"
         ),
         .init(
-            tokens: [.operator(.subtraction), .operand(.init(2))],
+            tokens: .init("-2"),
             expectedString: "-2"
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.addition)],
+            tokens: .init("1+"),
             expectedString: CalculationError.invalidFormula(.incompleteFormula).localizedDescription
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.division), .operand(.init(0))],
+            tokens: .init("1÷0"),
             expectedString: CalculationError.undefined.localizedDescription
         ),
     ] as [StringCondition])
@@ -64,23 +53,15 @@ struct CalculatorFormatterTests {
             expectedString: "0"
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.addition)],
+            tokens: .init("1+"),
             expectedString: "1+"
         ),
         .init(
-            tokens: [.operator(.subtraction), .operand(.init(1.2))],
+            tokens: .init("-1.2"),
             expectedString: "-1.2"
         ),
         .init(
-            tokens: [
-                .operand(.init(1)),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal)
-            ],
+            tokens: .init("1+1=+1="),
             expectedString: "1+1=+1="
         ),
     ] as [StringCondition])
@@ -91,35 +72,27 @@ struct CalculatorFormatterTests {
 
     @Test(arguments: [
         .init(
-            tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(1)), .operator(.equal)],
+            tokens: .init("1+1="),
             expectedDecimalValue: 2
         ),
         .init(
-            tokens: [
-                .operand(.init(1)),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal)
-            ],
+            tokens: .init("1+1=+1="),
             expectedDecimalValue: 3
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.subtraction), .operand(.init(3)), .operator(.equal)],
+            tokens: .init("1-3="),
             expectedDecimalValue: -2
         ),
         .init(
-            tokens: [.operand(.init(0.1)), .operator(.addition), .operand(.init(0.2))],
+            tokens: .init("0.1+0.2"),
             expectedDecimalValue: 0.3
         ),
         .init(
-            tokens: [.operand(.init(3))],
+            tokens: .init("3"),
             expectedDecimalValue: 3
         ),
         .init(
-            tokens: [.operator(.subtraction), .operand(.init(2))],
+            tokens: .init("-2"),
             expectedDecimalValue: -2
         ),
     ] as [DecimalValueCondition])

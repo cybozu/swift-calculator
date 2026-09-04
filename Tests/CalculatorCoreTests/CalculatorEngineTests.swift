@@ -12,8 +12,7 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0))],
-                expression: "0"
+                tokens: .init("0")
             )
         ),
         .init(
@@ -24,8 +23,7 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1))],
-                expression: "1"
+                tokens: .init("1")
             )
         ),
         .init(
@@ -36,8 +34,7 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(2))],
-                expression: "2"
+                tokens: .init("2")
             )
         ),
         .init(
@@ -48,8 +45,7 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(3))],
-                expression: "3"
+                tokens: .init("3")
             )
         ),
         .init(
@@ -60,8 +56,7 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(4))],
-                expression: "4"
+                tokens: .init("4")
             )
         ),
         .init(
@@ -72,8 +67,7 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(5))],
-                expression: "5"
+                tokens: .init("5")
             )
         ),
         .init(
@@ -84,8 +78,7 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(6))],
-                expression: "6"
+                tokens: .init("6")
             )
         ),
         .init(
@@ -96,8 +89,7 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(7))],
-                expression: "7"
+                tokens: .init("7")
             )
         ),
         .init(
@@ -108,8 +100,7 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(8))],
-                expression: "8"
+                tokens: .init("8")
             )
         ),
         .init(
@@ -120,8 +111,7 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(9))],
-                expression: "9"
+                tokens: .init("9")
             )
         ),
     ] as [NumberCondition])
@@ -132,7 +122,6 @@ struct CalculatorEngineTests {
         sut.handle(number: condition.number)
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
@@ -144,8 +133,7 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.addition)],
-                expression: "0+"
+                tokens: .init("0+")
             )
         ),
         .init(
@@ -156,8 +144,7 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.subtraction)],
-                expression: "-"
+                tokens: .init("-")
             )
         ),
         .init(
@@ -168,8 +155,7 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication)],
-                expression: "0×"
+                tokens: .init("0×")
             )
         ),
         .init(
@@ -180,8 +166,7 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division)],
-                expression: "0÷"
+                tokens: .init("0÷")
             )
         ),
         .init(
@@ -192,8 +177,7 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus)],
-                expression: "0%"
+                tokens: .init("0%")
             )
         ),
 
@@ -205,7 +189,6 @@ struct CalculatorEngineTests {
         sut.handle(operator: condition.operator)
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test
@@ -213,7 +196,7 @@ struct CalculatorEngineTests {
         var sut = CalculatorEngine()
         sut.handlePeriod()
         #expect(sut.isEditingOperand)
-        #expect(sut.tokens == [.operand(.init(digits: [.number(0), .period]))])
+        #expect(sut.tokens == .init("0."))
         #expect(sut.expression == "0.")
     }
 
@@ -222,36 +205,33 @@ struct CalculatorEngineTests {
             number: 1,
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(0)]))]
+                tokens: .init("0")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1))],
-                expression: "1"
+                tokens: .init("1")
             )
         ),
         .init(
             number: 1,
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(0), .period]))]
+                tokens: .init("0.")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(0), .period, .number(1)]))],
-                expression: "0.1"
+                tokens: .init("0.1")
             )
         ),
         .init(
             number: 2,
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(0), .period, .number(1)]))]
+                tokens: .init("0.1")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(0), .period, .number(1), .number(2)]))],
-                expression: "0.12"
+                tokens: .init("0.12")
             )
         ),
     ] as [NumberCondition])
@@ -262,118 +242,107 @@ struct CalculatorEngineTests {
         sut.handle(number: condition.number)
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1))]
+                tokens: .init("1")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(1), .period]))],
-                expression: "1."
+                tokens: .init("1.")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(2))]
+                tokens: .init("2")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(2), .period]))],
-                expression: "2."
+                tokens: .init("2.")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(3))]
+                tokens: .init("3")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(3), .period]))],
-                expression: "3."
+                tokens: .init("3.")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(4))]
+                tokens: .init("4")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(4), .period]))],
-                expression: "4."
+                tokens: .init("4.")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(5))]
+                tokens: .init("5")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(5), .period]))],
-                expression: "5."
+                tokens: .init("5.")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(6))]
+                tokens: .init("6")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(6), .period]))],
-                expression: "6."
+                tokens: .init("6.")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(7))]
+                tokens: .init("7")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(7), .period]))],
-                expression: "7."
+                tokens: .init("7.")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(8))]
+                tokens: .init("8")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(8), .period]))],
-                expression: "8."
+                tokens: .init("8.")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(9))]
+                tokens: .init("9")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(9), .period]))],
-                expression: "9."
+                tokens: .init("9.")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1.1))]
+                tokens: .init("1.1")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1.1))],
-                expression: "1.1"
+                tokens: .init("1.1")
             )
         ),
     ] as [Condition])
@@ -384,63 +353,57 @@ struct CalculatorEngineTests {
         sut.handlePeriod()
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.addition)]
+                tokens: .init("+")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.addition), .operand(.init(digits: [.number(0), .period]))],
-                expression: "+0."
+                tokens: .init("+0.")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.subtraction)]
+                tokens: .init("-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.subtraction), .operand(.init(digits: [.number(0), .period]))],
-                expression: "-0."
+                tokens: .init("-0.")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.multiplication)]
+                tokens: .init("×")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.multiplication), .operand(.init(digits: [.number(0), .period]))],
-                expression: "×0."
+                tokens: .init("×0.")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.division)]
+                tokens: .init("÷")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.division), .operand(.init(digits: [.number(0), .period]))],
-                expression: "÷0."
+                tokens: .init("÷0.")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.modulus)]
+                tokens: .init("%")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.modulus), .operand(.init(digits: [.number(0), .period]))],
-                expression: "%0."
+                tokens: .init("%0.")
             )
         ),
     ] as [Condition])
@@ -451,7 +414,6 @@ struct CalculatorEngineTests {
         sut.handlePeriod()
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
@@ -459,60 +421,55 @@ struct CalculatorEngineTests {
             operator: .addition,
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1))]
+                tokens: .init("1")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1)), .operator(.addition)],
-                expression: "1+"
+                tokens: .init("1+")
             )
         ),
         .init(
             operator: .subtraction,
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1))]
+                tokens: .init("1")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1)), .operator(.subtraction)],
-                expression: "1-"
+                tokens: .init("1-")
             )
         ),
         .init(
             operator: .multiplication,
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1))]
+                tokens: .init("1")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1)), .operator(.multiplication)],
-                expression: "1×"
+                tokens: .init("1×")
             )
         ),
         .init(
             operator: .division,
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1))]
+                tokens: .init("1")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1)), .operator(.division)],
-                expression: "1÷"
+                tokens: .init("1÷")
             )
         ),
         .init(
             operator: .modulus,
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1))]
+                tokens: .init("1")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1)), .operator(.modulus)],
-                expression: "1%"
+                tokens: .init("1%")
             )
         ),
     ] as [OperatorCondition])
@@ -523,63 +480,57 @@ struct CalculatorEngineTests {
         sut.handle(operator: condition.operator)
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.addition)]
+                tokens: .init("+")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.addition)],
-                expression: "+"
+                tokens: .init("+")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.subtraction)]
+                tokens: .init("-")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [],
-                expression: "0"
+                tokens: []
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.multiplication)]
+                tokens: .init("×")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.addition)],
-                expression: "+"
+                tokens: .init("+")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.division)]
+                tokens: .init("÷")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.addition)],
-                expression: "+"
+                tokens: .init("+")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.modulus)]
+                tokens: .init("%")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.addition)],
-                expression: "+"
+                tokens: .init("+")
             )
         ),
     ] as [Condition])
@@ -590,96 +541,87 @@ struct CalculatorEngineTests {
         sut.handle(operator: .addition)
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.addition)]
+                tokens: .init("0+")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.addition)],
-                expression: "0+"
+                tokens: .init("0+")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.subtraction)]
+                tokens: .init("0-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.addition)],
-                expression: "0+"
+                tokens: .init("0+")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication)]
+                tokens: .init("0×")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.addition)],
-                expression: "0+"
+                tokens: .init("0+")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division)]
+                tokens: .init("0÷")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.addition)],
-                expression: "0+"
+                tokens: .init("0+")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus)]
+                tokens: .init("0%")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.addition)],
-                expression: "0+"
+                tokens: .init("0+")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication), .operator(.subtraction)]
+                tokens: .init("0×-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.addition)],
-                expression: "0+"
+                tokens: .init("0+")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division), .operator(.subtraction)]
+                tokens: .init("0÷-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.addition)],
-                expression: "0+"
+                tokens: .init("0+")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus), .operator(.subtraction)]
+                tokens: .init("0%-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.addition)],
-                expression: "0+"
+                tokens: .init("0+")
             )
         ),
     ] as [Condition])
@@ -690,63 +632,57 @@ struct CalculatorEngineTests {
         sut.handle(operator: .addition)
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.addition)]
+                tokens: .init("+")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.subtraction)],
-                expression: "-"
+                tokens: .init("-")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.subtraction)]
+                tokens: .init("-")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.subtraction)],
-                expression: "-"
+                tokens: .init("-")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.multiplication)]
+                tokens: .init("×")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.multiplication), .operator(.subtraction)],
-                expression: "×-"
+                tokens: .init("×-")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.division)]
+                tokens: .init("÷")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.division), .operator(.subtraction)],
-                expression: "÷-"
+                tokens: .init("÷-")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.modulus)]
+                tokens: .init("%")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.modulus), .operator(.subtraction)],
-                expression: "%-"
+                tokens: .init("%-")
             )
         ),
     ] as [Condition])
@@ -757,96 +693,87 @@ struct CalculatorEngineTests {
         sut.handle(operator: .subtraction)
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.addition)]
+                tokens: .init("0+")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.subtraction)],
-                expression: "0-"
+                tokens: .init("0-")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.subtraction)]
+                tokens: .init("0-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.subtraction)],
-                expression: "0-"
+                tokens: .init("0-")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication)]
+                tokens: .init("0×")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication), .operator(.subtraction)],
-                expression: "0×-"
+                tokens: .init("0×-")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division)]
+                tokens: .init("0÷")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division), .operator(.subtraction)],
-                expression: "0÷-"
+                tokens: .init("0÷-")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus)]
+                tokens: .init("0%")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus), .operator(.subtraction)],
-                expression: "0%-"
+                tokens: .init("0%-")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication), .operator(.subtraction)]
+                tokens: .init("0×-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication), .operator(.subtraction)],
-                expression: "0×-"
+                tokens: .init("0×-")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division), .operator(.subtraction)]
+                tokens: .init("0÷-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division), .operator(.subtraction)],
-                expression: "0÷-"
+                tokens: .init("0÷-")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus), .operator(.subtraction)]
+                tokens: .init("0%-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus), .operator(.subtraction)],
-                expression: "0%-"
+                tokens: .init("0%-")
             )
         ),
     ] as [Condition])
@@ -857,63 +784,57 @@ struct CalculatorEngineTests {
         sut.handle(operator: .subtraction)
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.addition)]
+                tokens: .init("+")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.multiplication)],
-                expression: "×"
+                tokens: .init("×")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.subtraction)]
+                tokens: .init("-")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [],
-                expression: "0"
+                tokens: []
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.multiplication)]
+                tokens: .init("×")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.multiplication)],
-                expression: "×"
+                tokens: .init("×")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.division)]
+                tokens: .init("÷")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.multiplication)],
-                expression: "×"
+                tokens: .init("×")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.modulus)]
+                tokens: .init("%")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.multiplication)],
-                expression: "×"
+                tokens: .init("×")
             )
         ),
     ] as [Condition])
@@ -924,85 +845,77 @@ struct CalculatorEngineTests {
         sut.handle(operator: .multiplication)
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.addition)]
+                tokens: .init("0+")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication)],
-                expression: "0×"
+                tokens: .init("0×")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.subtraction)]
+                tokens: .init("0-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication)],
-                expression: "0×"
+                tokens: .init("0×")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication)]
+                tokens: .init("0×")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication)],
-                expression: "0×"
+                tokens: .init("0×")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division)]
+                tokens: .init("0÷")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication)],
-                expression: "0×"
+                tokens: .init("0×")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication), .operator(.subtraction)]
+                tokens: .init("0×-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication)],
-                expression: "0×"
+                tokens: .init("0×")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division), .operator(.subtraction)]
+                tokens: .init("0÷-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication)],
-                expression: "0×"
+                tokens: .init("0×")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus), .operator(.subtraction)]
+                tokens: .init("0%-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication)],
-                expression: "0×"
+                tokens: .init("0×")
             )
         ),
     ] as [Condition])
@@ -1013,63 +926,57 @@ struct CalculatorEngineTests {
         sut.handle(operator: .multiplication)
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.addition)]
+                tokens: .init("+")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.division)],
-                expression: "÷"
+                tokens: .init("÷")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.subtraction)]
+                tokens: .init("-")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [],
-                expression: "0"
+                tokens: []
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.multiplication)]
+                tokens: .init("×")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.division)],
-                expression: "÷"
+                tokens: .init("÷")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.division)]
+                tokens: .init("÷")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.division)],
-                expression: "÷"
+                tokens: .init("÷")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.modulus)]
+                tokens: .init("%")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.division)],
-                expression: "÷"
+                tokens: .init("÷")
             )
         ),
     ] as [Condition])
@@ -1080,96 +987,87 @@ struct CalculatorEngineTests {
         sut.handle(operator: .division)
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.addition)]
+                tokens: .init("0+")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division)],
-                expression: "0÷"
+                tokens: .init("0÷")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.subtraction)]
+                tokens: .init("0-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division)],
-                expression: "0÷"
+                tokens: .init("0÷")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication)]
+                tokens: .init("0×")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division)],
-                expression: "0÷"
+                tokens: .init("0÷")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division)]
+                tokens: .init("0÷")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division)],
-                expression: "0÷"
+                tokens: .init("0÷")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus)]
+                tokens: .init("0%")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division)],
-                expression: "0÷"
+                tokens: .init("0÷")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication), .operator(.subtraction)]
+                tokens: .init("0×-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division)],
-                expression: "0÷"
+                tokens: .init("0÷")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division), .operator(.subtraction)]
+                tokens: .init("0÷-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division)],
-                expression: "0÷"
+                tokens: .init("0÷")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus), .operator(.subtraction)]
+                tokens: .init("0%-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division)],
-                expression: "0÷"
+                tokens: .init("0÷")
             )
         ),
     ] as [Condition])
@@ -1180,63 +1078,57 @@ struct CalculatorEngineTests {
         sut.handle(operator: .division)
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.addition)]
+                tokens: .init("+")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.modulus)],
-                expression: "%"
+                tokens: .init("%")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.subtraction)]
+                tokens: .init("-")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [],
-                expression: "0"
+                tokens: []
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.multiplication)]
+                tokens: .init("×")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.modulus)],
-                expression: "%"
+                tokens: .init("%")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.division)]
+                tokens: .init("÷")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.modulus)],
-                expression: "%"
+                tokens: .init("%")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.modulus)]
+                tokens: .init("%")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.modulus)],
-                expression: "%"
+                tokens: .init("%")
             )
         ),
     ] as [Condition])
@@ -1247,96 +1139,87 @@ struct CalculatorEngineTests {
         sut.handle(operator: .modulus)
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.addition)]
+                tokens: .init("0+")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus)],
-                expression: "0%"
+                tokens: .init("0%")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.subtraction)]
+                tokens: .init("0-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus)],
-                expression: "0%"
+                tokens: .init("0%")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication)]
+                tokens: .init("0×")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus)],
-                expression: "0%"
+                tokens: .init("0%")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division)]
+                tokens: .init("0÷")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus)],
-                expression: "0%"
+                tokens: .init("0%")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus)]
+                tokens: .init("0%")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus)],
-                expression: "0%"
+                tokens: .init("0%")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication), .operator(.subtraction)]
+                tokens: .init("0×-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus)],
-                expression: "0%"
+                tokens: .init("0%")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division), .operator(.subtraction)]
+                tokens: .init("0÷-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus)],
-                expression: "0%"
+                tokens: .init("0%")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus), .operator(.subtraction)]
+                tokens: .init("0%-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus)],
-                expression: "0%"
+                tokens: .init("0%")
             )
         ),
     ] as [Condition])
@@ -1347,63 +1230,57 @@ struct CalculatorEngineTests {
         sut.handle(operator: .modulus)
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.addition)]
+                tokens: .init("+")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.addition), .operand(.init(0))],
-                expression: "+0"
+                tokens: .init("+0")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.subtraction)]
+                tokens: .init("-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.subtraction), .operand(.init(0))],
-                expression: "-0"
+                tokens: .init("-0")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.multiplication)]
+                tokens: .init("×")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.multiplication), .operand(.init(0))],
-                expression: "×0"
+                tokens: .init("×0")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.division)]
+                tokens: .init("÷")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.division), .operand(.init(0))],
-                expression: "÷0"
+                tokens: .init("÷0")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.modulus)]
+                tokens: .init("%")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.modulus), .operand(.init(0))],
-                expression: "%0"
+                tokens: .init("%0")
             )
         ),
     ] as [Condition])
@@ -1414,7 +1291,6 @@ struct CalculatorEngineTests {
         sut.handle(number: 0)
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
@@ -1425,129 +1301,117 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [],
-                expression: "0"
+                tokens: []
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.subtraction)]
+                tokens: .init("-")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.subtraction)],
-                expression: "-"
+                tokens: .init("-")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.subtraction), .operand(.init(1))]
+                tokens: .init("-1")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1))],
-                expression: "1"
+                tokens: .init("1")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1))]
+                tokens: .init("1")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.subtraction), .operand(.init(1))],
-                expression: "-1"
+                tokens: .init("-1")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1)), .operator(.subtraction), .operand(.init(0))]
+                tokens: .init("1-0")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(0))],
-                expression: "1+0"
+                tokens: .init("1+0")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(0))]
+                tokens: .init("1+0")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1)), .operator(.subtraction), .operand(.init(0))],
-                expression: "1-0"
+                tokens: .init("1-0")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.multiplication), .operand(.init(1))]
+                tokens: .init("×1")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.multiplication), .operator(.subtraction), .operand(.init(1))],
-                expression: "×-1"
+                tokens: .init("×-1")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.multiplication), .operator(.subtraction), .operand(.init(1))]
+                tokens: .init("×-1")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.multiplication), .operand(.init(1))],
-                expression: "×1"
+                tokens: .init("×1")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.division), .operand(.init(1))]
+                tokens: .init("÷1")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.division), .operator(.subtraction), .operand(.init(1))],
-                expression: "÷-1"
+                tokens: .init("÷-1")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.division), .operator(.subtraction), .operand(.init(1))]
+                tokens: .init("÷-1")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.division), .operand(.init(1))],
-                expression: "÷1"
+                tokens: .init("÷1")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.modulus), .operator(.subtraction), .operand(.init(1))]
+                tokens: .init("%-1")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.modulus), .operand(.init(1))],
-                expression: "%1"
+                tokens: .init("%1")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.modulus), .operand(.init(1))]
+                tokens: .init("%1")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.modulus), .operator(.subtraction), .operand(.init(1))],
-                expression: "%-1"
+                tokens: .init("%-1")
             )
         ),
     ] as [Condition])
@@ -1558,27 +1422,26 @@ struct CalculatorEngineTests {
         sut.handlePlusMinus()
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test
     func handle_calculate_skipped() {
         var sut = CalculatorEngine()
         sut.isEditingOperand = true
-        sut.tokens = [.operand(.init(1)), .operator(.multiplication), .operator(.subtraction)]
+        sut.tokens = .init("1×-")
         sut.handleCalculate()
         #expect(sut.isEditingOperand)
-        #expect(sut.tokens == [.operand(.init(1)), .operator(.multiplication), .operator(.subtraction)])
+        #expect(sut.tokens == .init("1×-"))
     }
 
     @Test
     func handle_calculate_succeeded() {
         var sut = CalculatorEngine()
         sut.isEditingOperand = true
-        sut.tokens = [.operand(.init(1)), .operator(.multiplication), .operator(.subtraction), .operand(.init(1))]
+        sut.tokens = .init("1×-1")
         sut.handleCalculate()
         #expect(!sut.isEditingOperand)
-        #expect(sut.tokens == [.operator(.subtraction), .operand(.init(1))])
+        #expect(sut.tokens == .init("-1"))
         #expect(sut.expression == "-1")
     }
 
@@ -1597,10 +1460,10 @@ struct CalculatorEngineTests {
     func handle_operator_input_equal() {
         var sut = CalculatorEngine()
         sut.isEditingOperand = true
-        sut.tokens = [.operand(.init(1)), .operator(.addition), .operand(.init(1))]
+        sut.tokens = .init("1+1")
         sut.handle(operator: .equal)
         #expect(!sut.isEditingOperand)
-        #expect(sut.tokens == [.operand(.init(2))])
+        #expect(sut.tokens == .init("2"))
         #expect(sut.expression == "2")
     }
 
@@ -1608,34 +1471,31 @@ struct CalculatorEngineTests {
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(5))]
+                tokens: .init("5")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operand(.init(5))],
-                expression: "5"
+                tokens: .init("5")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.subtraction), .operand(.init(5))]
+                tokens: .init("-5")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.subtraction), .operand(.init(5))],
-                expression: "-5"
+                tokens: .init("-5")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1)), .operator(.addition)]
+                tokens: .init("1+")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(1)), .operator(.addition)],
-                expression: "1+"
+                tokens: .init("1+")
             )
         ),
     ] as [Condition])
@@ -1646,17 +1506,16 @@ struct CalculatorEngineTests {
         sut.handleCalculate()
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test
     func handle_calculate_clears_a_stale_error() {
         var sut = CalculatorEngine()
         sut.error = .undefined
-        sut.tokens = [.operand(.init(2)), .operator(.addition), .operand(.init(2))]
+        sut.tokens = .init("2+2")
         sut.handleCalculate()
         #expect(sut.error == nil)
-        #expect(sut.tokens == [.operand(.init(4))])
+        #expect(sut.tokens == .init("4"))
     }
 
     @Test(arguments: [-1, 10, 42])
@@ -1678,26 +1537,26 @@ struct CalculatorEngineTests {
     @Test
     func handle_number_on_an_operand_marks_editing() {
         var sut = CalculatorEngine()
-        sut.tokens = [.operand(.init(12))]
+        sut.tokens = .init("12")
         sut.handle(number: 5)
         #expect(sut.isEditingOperand)
-        #expect(sut.tokens == [.operand(.init(125))])
+        #expect(sut.tokens == .init("125"))
     }
 
     @Test
     func handle_delete_on_an_operand_marks_editing() {
         var sut = CalculatorEngine()
-        sut.tokens = [.operand(.init(12))]
+        sut.tokens = .init("12")
         sut.handleDelete()
         #expect(sut.isEditingOperand)
-        #expect(sut.tokens == [.operand(.init(1))])
+        #expect(sut.tokens == .init("1"))
     }
 
     @Test
     func handle_all_clear() {
         var sut = CalculatorEngine()
         sut.isEditingOperand = true
-        sut.tokens = [.operand(.init(1)), .operator(.addition), .operand(.init(1))]
+        sut.tokens = .init("1+1")
         sut.handleAllClear()
         #expect(!sut.isEditingOperand)
         #expect(sut.tokens.isEmpty)
@@ -1717,23 +1576,21 @@ struct CalculatorEngineTests {
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0))]
+                tokens: .init("0")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [],
-                expression: "0"
+                tokens: []
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operator(.subtraction), .operand(.init(1))]
+                tokens: .init("-1")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.subtraction)],
-                expression: "-"
+                tokens: .init("-")
             )
         ),
     ] as [Condition])
@@ -1744,7 +1601,6 @@ struct CalculatorEngineTests {
         sut.handleClear()
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 
     @Test(arguments: [
@@ -1755,140 +1611,127 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [],
-                expression: "0"
+                tokens: []
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(1)]))]
+                tokens: .init("1")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [],
-                expression: "0"
+                tokens: []
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(1), .number(2)]))]
+                tokens: .init("12")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(1)]))],
-                expression: "1"
+                tokens: .init("1")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(1), .period]))]
+                tokens: .init("1.")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(1)]))],
-                expression: "1"
+                tokens: .init("1")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(1), .period, .number(2)]))]
+                tokens: .init("1.2")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(1), .period]))],
-                expression: "1."
+                tokens: .init("1.")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(1), .period])), .operator(.addition)]
+                tokens: .init("1.+")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(1), .period]))],
-                expression: "1."
+                tokens: .init("1.")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(1), .period, .number(2)])), .operator(.addition)]
+                tokens: .init("1.2+")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(digits: [.number(1), .period, .number(2)]))],
-                expression: "1.2"
+                tokens: .init("1.2")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.addition)]
+                tokens: .init("0+")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0))],
-                expression: "0"
+                tokens: .init("0")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: false,
-                tokens: [.operator(.subtraction)]
+                tokens: .init("-")
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: [],
-                expression: "0"
+                tokens: []
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.subtraction)]
+                tokens: .init("0-")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0))],
-                expression: "0"
+                tokens: .init("0")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.multiplication)]
+                tokens: .init("0×")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0))],
-                expression: "0"
+                tokens: .init("0")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.division)]
+                tokens: .init("0÷")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0))],
-                expression: "0"
+                tokens: .init("0")
             )
         ),
         .init(
             premise: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0)), .operator(.modulus)]
+                tokens: .init("0%")
             ),
             expect: .init(
                 isEditingOperand: true,
-                tokens: [.operand(.init(0))],
-                expression: "0"
+                tokens: .init("0")
             )
         ),
     ] as [Condition])
@@ -1899,7 +1742,6 @@ struct CalculatorEngineTests {
         sut.handleDelete()
         #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
         #expect(sut.tokens == condition.expect.tokens)
-        #expect(sut.expression == condition.expect.expression)
     }
 }
 
@@ -1911,7 +1753,6 @@ struct Premise: Sendable {
 struct Expect: Sendable {
     var isEditingOperand: Bool
     var tokens: [Token]
-    var expression: String
 }
 
 struct Condition: Sendable {

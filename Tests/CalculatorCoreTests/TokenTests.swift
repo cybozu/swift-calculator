@@ -29,13 +29,13 @@ struct TokenTests {
 
     @Test(arguments: [
         .init(
-            tokens: [.operand(.init(1)), .operator(.multiplication), .operator(.subtraction), .operand(.init(2))],
+            tokens: .init("1×-2"),
             at: 1,
             count: 3,
             expectedTokens: [.operand(.init(1))]
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.multiplication), .operator(.subtraction), .operand(.init(2))],
+            tokens: .init("1×-2"),
             at: 2,
             count: 1,
             expectedTokens: [.operand(.init(1)), .operator(.multiplication), .operand(.init(2))]
@@ -64,37 +64,37 @@ struct TokenTests {
             expectedSignedOperand: nil
         ),
         .init(
-            tokens: [.operand(.init(1))],
+            tokens: .init("1"),
             index: 0,
             expectedSignedOperand: nil
         ),
         .init(
-            tokens: [.operator(.subtraction), .operand(.init(1))],
+            tokens: .init("-1"),
             index: 1,
             expectedSignedOperand: nil
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(2))],
+            tokens: .init("1+2"),
             index: 1,
             expectedSignedOperand: .init(value: 1, cost: 1)
         ),
         .init(
-            tokens: [.operator(.subtraction), .operand(.init(1)), .operator(.addition), .operand(.init(2))],
+            tokens: .init("-1+2"),
             index: 2,
             expectedSignedOperand: .init(value: -1, cost: 2)
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(2)), .operator(.addition), .operand(.init(3))],
+            tokens: .init("1+2+3"),
             index: 3,
             expectedSignedOperand: .init(value: 2, cost: 1)
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.subtraction), .operand(.init(2)), .operator(.addition), .operand(.init(3))],
+            tokens: .init("1-2+3"),
             index: 3,
             expectedSignedOperand: .init(value: 2, cost: 1)
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.multiplication), .operator(.subtraction), .operand(.init(2))],
+            tokens: .init("1×-2"),
             index: 2,
             expectedSignedOperand: nil
         ),
@@ -121,32 +121,32 @@ struct TokenTests {
             expectedSignedOperand: nil
         ),
         .init(
-            tokens: [.operand(.init(1))],
+            tokens: .init("1"),
             index: 0,
             expectedSignedOperand: nil
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.subtraction)],
+            tokens: .init("1-"),
             index: 0,
             expectedSignedOperand: nil
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(2))],
+            tokens: .init("1+2"),
             index: 1,
             expectedSignedOperand: .init(value: 2, cost: 1)
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.multiplication), .operator(.subtraction), .operand(.init(2))],
+            tokens: .init("1×-2"),
             index: 1,
             expectedSignedOperand: .init(value: -2, cost: 2)
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(2)), .operator(.addition), .operand(.init(3))],
+            tokens: .init("1+2+3"),
             index: 1,
             expectedSignedOperand: .init(value: 2, cost: 1)
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.multiplication), .operator(.subtraction), .operand(.init(2))],
+            tokens: .init("1×-2"),
             index: 0,
             expectedSignedOperand: nil
         ),
@@ -158,39 +158,39 @@ struct TokenTests {
 
     @Test(arguments: [
         .init(
-            tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(1))],
+            tokens: .init("1+1"),
             expectedTokens: [.operand(.init(2))]
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.subtraction), .operand(.init(1))],
+            tokens: .init("1-1"),
             expectedTokens: [.operand(.init(0))]
         ),
         .init(
-            tokens: [.operand(.init(2)), .operator(.multiplication), .operand(.init(3))],
+            tokens: .init("2×3"),
             expectedTokens: [.operand(.init(6))]
         ),
         .init(
-            tokens: [.operand(.init(6)), .operator(.division), .operand(.init(3))],
+            tokens: .init("6÷3"),
             expectedTokens: [.operand(.init(2))]
         ),
         .init(
-            tokens: [.operand(.init(3)), .operator(.modulus), .operand(.init(2))],
+            tokens: .init("3%2"),
             expectedTokens: [.operand(.init(1))]
         ),
         .init(
-            tokens: [.operand(.init(3.5)), .operator(.modulus), .operand(.init(2))],
+            tokens: .init("3.5%2"),
             expectedTokens: [.operand(.init(1.5))]
         ),
         .init(
-            tokens: [.operator(.subtraction), .operand(.init(3.5)), .operator(.modulus), .operand(.init(2))],
+            tokens: .init("-3.5%2"),
             expectedTokens: [.operator(.subtraction), .operand(.init(1.5))]
         ),
         .init(
-            tokens: [.operand(.init(3.5)), .operator(.modulus), .operator(.subtraction), .operand(.init(2))],
+            tokens: .init("3.5%-2"),
             expectedTokens: [.operand(.init(1.5))]
         ),
         .init(
-            tokens: [.operator(.subtraction), .operand(.init(3.5)), .operator(.modulus), .operator(.subtraction), .operand(.init(2))],
+            tokens: .init("-3.5%-2"),
             expectedTokens: [.operator(.subtraction), .operand(.init(1.5))]
         ),
     ] as [CalculatedCondition])
@@ -205,31 +205,31 @@ struct TokenTests {
             expectedError: .invalidFormula(.incompleteFormula)
         ),
         .init(
-            tokens: [.operand(.init(1))],
+            tokens: .init("1"),
             expectedError: .invalidFormula(.incompleteFormula)
         ),
         .init(
-            tokens: [.operator(.subtraction)],
+            tokens: .init("-"),
             expectedError: .invalidFormula(.incompleteFormula)
         ),
         .init(
-            tokens: [.operator(.subtraction), .operand(.init(1))],
+            tokens: .init("-1"),
             expectedError: .invalidFormula(.incompleteFormula)
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.addition)],
+            tokens: .init("1+"),
             expectedError: .invalidFormula(.incompleteFormula)
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.multiplication), .operator(.division)],
+            tokens: .init("1×÷"),
             expectedError: .invalidFormula(.incompleteFormula)
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.division), .operand(.init(0))],
+            tokens: .init("1÷0"),
             expectedError: .undefined
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.modulus), .operand(.init(0))],
+            tokens: .init("1%0"),
             expectedError: .undefined
         ),
     ] as [ErrorCondition])
@@ -241,23 +241,23 @@ struct TokenTests {
 
     @Test(arguments: [
         .init(
-            tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(1)), .operator(.addition), .operand(.init(1)), .operator(.addition), .operand(.init(1))],
+            tokens: .init("1+1+1+1"),
             expectedTokens: [.operand(.init(4))]
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.subtraction), .operand(.init(1)), .operator(.subtraction), .operand(.init(1)), .operator(.subtraction), .operand(.init(1))],
+            tokens: .init("1-1-1-1"),
             expectedTokens: [.operator(.subtraction), .operand(.init(2))]
         ),
         .init(
-            tokens: [.operand(.init(2)), .operator(.multiplication), .operand(.init(3)), .operator(.multiplication), .operand(.init(4)), .operator(.multiplication), .operand(.init(5))],
+            tokens: .init("2×3×4×5"),
             expectedTokens: [.operand(.init(120))]
         ),
         .init(
-            tokens: [.operand(.init(300)), .operator(.division), .operand(.init(10)), .operator(.division), .operand(.init(5)), .operator(.division), .operand(.init(2))],
+            tokens: .init("300÷10÷5÷2"),
             expectedTokens: [.operand(.init(3))]
         ),
         .init(
-            tokens: [.operand(.init(80)), .operator(.modulus), .operand(.init(50)), .operator(.modulus), .operand(.init(20)), .operator(.modulus), .operand(.init(3))],
+            tokens: .init("80%50%20%3"),
             expectedTokens: [.operand(.init(1))]
         ),
     ] as [CalculatedCondition])
@@ -268,35 +268,11 @@ struct TokenTests {
 
     @Test(arguments: [
         .init(
-            tokens: [
-                .operand(.init(10)),
-                .operator(.addition),
-                .operand(.init(5)),
-                .operator(.multiplication),
-                .operator(.subtraction),
-                .operand(.init(6)),
-                .operator(.division),
-                .operator(.subtraction),
-                .operand(.init(3)),
-                .operator(.addition),
-                .operand(.init(2))
-            ],
+            tokens: .init("10+5×-6÷-3+2"),
             expectedTokens: [.operand(.init(22))]
         ),
         .init(
-            tokens: [
-                .operand(.init(123.45)),
-                .operator(.modulus),
-                .operand(.init(3)),
-                .operator(.multiplication),
-                .operand(.init(100)),
-                .operator(.division),
-                .operand(.init(9)),
-                .operator(.subtraction),
-                .operand(.init(7)),
-                .operator(.addition),
-                .operand(.init(2))
-            ],
+            tokens: .init("123.45%3×100÷9-7+2"),
             expectedTokens: [.operand(.init(0))]
         ),
     ] as [CalculatedCondition])
@@ -307,47 +283,19 @@ struct TokenTests {
 
     @Test(arguments: [
         .init(
-            tokens: [
-                .operand(.init(5)),
-                .operator(.subtraction),
-                .operand(.init(3)),
-                .operator(.multiplication),
-                .operator(.subtraction),
-                .operand(.init(2))
-            ],
+            tokens: .init("5-3×-2"),
             expectedTokens: [.operand(.init(11))]
         ),
         .init(
-            tokens: [
-                .operand(.init(5)),
-                .operator(.addition),
-                .operand(.init(3)),
-                .operator(.multiplication),
-                .operator(.subtraction),
-                .operand(.init(2))
-            ],
+            tokens: .init("5+3×-2"),
             expectedTokens: [.operator(.subtraction), .operand(.init(1))]
         ),
         .init(
-            tokens: [
-                .operand(.init(2)),
-                .operator(.multiplication),
-                .operator(.subtraction),
-                .operand(.init(3)),
-                .operator(.subtraction),
-                .operand(.init(1))
-            ],
+            tokens: .init("2×-3-1"),
             expectedTokens: [.operator(.subtraction), .operand(.init(7))]
         ),
         .init(
-            tokens: [
-                .operand(.init(6)),
-                .operator(.division),
-                .operator(.subtraction),
-                .operand(.init(3)),
-                .operator(.subtraction),
-                .operand(.init(1))
-            ],
+            tokens: .init("6÷-3-1"),
             expectedTokens: [.operator(.subtraction), .operand(.init(3))]
         ),
     ] as [CalculatedCondition])
@@ -358,23 +306,19 @@ struct TokenTests {
 
     @Test(arguments: [
         .init(
-            tokens: [
-                .operand(.init(decimalValue: Decimal(string: "10000000000000001")!)),
-                .operator(.addition),
-                .operand(.init(1))
-            ],
+            tokens: .init("10000000000000001+1"),
             expectedTokens: [.operand(.init(decimalValue: Decimal(string: "10000000000000002")!))]
         ),
         .init(
-            tokens: [.operand(.init(0.1)), .operator(.addition), .operand(.init(0.2))],
+            tokens: .init("0.1+0.2"),
             expectedTokens: [.operand(.init(0.3))]
         ),
         .init(
-            tokens: [.operand(.init(1)), .operator(.division), .operand(.init(3))],
+            tokens: .init("1÷3"),
             expectedTokens: [.operand(.init(0.3333333))]
         ),
         .init(
-            tokens: [.operand(.init(0.3)), .operator(.modulus), .operand(.init(0.1))],
+            tokens: .init("0.3%0.1"),
             expectedTokens: [.operand(.init(0))]
         ),
     ] as [CalculatedCondition])
@@ -385,91 +329,35 @@ struct TokenTests {
 
     @Test(arguments: [
         .init(
-            tokens: [.operand(.init(1)), .operator(.addition), .operand(.init(1)), .operator(.equal)],
+            tokens: .init("1+1="),
             expectedTokens: [.operand(.init(2))]
         ),
         .init(
-            tokens: [
-                .operand(.init(1)),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal)
-            ],
+            tokens: .init("1+1=+1=+1="),
             expectedTokens: [.operand(.init(4))]
         ),
         .init(
-            tokens: [
-                .operand(.init(1)),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal),
-                .operator(.subtraction),
-                .operand(.init(1)),
-                .operator(.equal)
-            ],
+            tokens: .init("1+1=-1="),
             expectedTokens: [.operand(.init(1))]
         ),
         .init(
-            tokens: [
-                .operand(.init(1)),
-                .operator(.subtraction),
-                .operand(.init(3)),
-                .operator(.equal),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal)
-            ],
+            tokens: .init("1-3=+1="),
             expectedTokens: [.operator(.subtraction), .operand(.init(1))]
         ),
         .init(
-            tokens: [
-                .operand(.init(2)),
-                .operator(.multiplication),
-                .operand(.init(3)),
-                .operator(.equal),
-                .operator(.modulus),
-                .operand(.init(4)),
-                .operator(.equal)
-            ],
+            tokens: .init("2×3=%4="),
             expectedTokens: [.operand(.init(2))]
         ),
         .init(
-            tokens: [
-                .operand(.init(1)),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal),
-                .operator(.addition),
-                .operand(.init(5)),
-                .operator(.equal)
-            ],
+            tokens: .init("1+1=+5="),
             expectedTokens: [.operand(.init(7))]
         ),
         .init(
-            tokens: [
-                .operand(.init(1)),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal),
-                .operator(.equal)
-            ],
+            tokens: .init("1+1=="),
             expectedTokens: [.operand(.init(2))]
         ),
         .init(
-            tokens: [
-                .operand(.init(1)),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal),
-                .operator(.addition),
-                .operand(.init(1))
-            ],
+            tokens: .init("1+1=+1"),
             expectedTokens: [.operand(.init(3))]
         ),
     ] as [CalculatedCondition])
@@ -480,51 +368,27 @@ struct TokenTests {
 
     @Test(arguments: [
         .init(
-            tokens: [.operator(.equal)],
+            tokens: .init("="),
             expectedError: .invalidFormula(.equalWithoutFormula)
         ),
         .init(
-            tokens: [.operator(.addition), .operand(.init(1)), .operator(.equal)],
+            tokens: .init("+1="),
             expectedError: .invalidFormula(.incompleteFormula)
         ),
         .init(
-            tokens: [.operator(.equal), .operand(.init(1)), .operator(.addition), .operand(.init(1))],
+            tokens: .init("=1+1"),
             expectedError: .invalidFormula(.equalWithoutFormula)
         ),
         .init(
-            tokens: [
-                .operand(.init(1)),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal),
-                .operand(.init(5)),
-                .operator(.equal)
-            ],
+            tokens: .init("1+1=5="),
             expectedError: .invalidFormula(.operandAfterResult)
         ),
         .init(
-            tokens: [
-                .operand(.init(1)),
-                .operator(.addition),
-                .operand(.init(1)),
-                .operator(.equal),
-                .operand(.init(5)),
-                .operator(.addition),
-                .operand(.init(3)),
-                .operator(.equal)
-            ],
+            tokens: .init("1+1=5+3="),
             expectedError: .invalidFormula(.operandAfterResult)
         ),
         .init(
-            tokens: [
-                .operand(.init(6)),
-                .operator(.division),
-                .operand(.init(2)),
-                .operator(.equal),
-                .operator(.division),
-                .operand(.init(0)),
-                .operator(.equal)
-            ],
+            tokens: .init("6÷2=÷0="),
             expectedError: .undefined
         ),
     ] as [ErrorCondition])
