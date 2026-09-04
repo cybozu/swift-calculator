@@ -3,35 +3,45 @@ import SwiftUI
 /// A view that provides a calculator that supports the four basic arithmetic operations and remainder (modulo) calculations.
 public struct Calculator: View {
     @Environment(\.calculatorStyle) private var _calculatorStyle
-    @State private var engine = CalculatorEngine()
+    @State private var state = CalculatorState()
+    @State private var isSelfUpdate = false
 
-    @Binding var value: String
+    @Binding var value: Decimal?
 
     /// Creates new calculator view.
     /// - Parameters:
-    ///   - value: The string value representing an expression or calculation result.
-    public init(value: Binding<String>) {
+    ///   - value: The decimal value settled by the calculator.
+    ///     It is nil while a formula is being edited or when the calculation failed.
+    ///     Assigning a value resets the calculator to it, and assigning nil over
+    ///     a settled value clears the calculator.
+    public init(value: Binding<Decimal?>) {
         _value = value
-        engine.setValue(value.wrappedValue)
+        state.value = value.wrappedValue
     }
 
     /// The content and behavior of the calculator view.
     public var body: some View {
         AnyView(_calculatorStyle.makeBody(configuration: .init(
-            value: engine.expression,
-            rows: engine.rows,
-            trigger: { engine.onTap($0) }
+            value: state.expression,
+            rows: state.rows,
+            trigger: { state.onTap($0) }
         )))
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("calculator")
         .onChange(of: value) { _, newValue in
-            guard engine.expression != newValue else { return }
-            engine.setValue(newValue)
+            guard !isSelfUpdate else {
+                isSelfUpdate = false
+                return
+            }
+            // An assigned nil clears the calculator even while the unsettled
+            // state already reports nil through the binding.
+            guard newValue == nil || state.value != newValue else { return }
+            state.value = newValue
         }
-        .onChange(of: engine.modifiedDate, initial: true) { _, _ in
-            let expression = engine.expression
-            guard value != expression else { return }
-            value = expression
+        .onChange(of: state.value, initial: true) { _, newValue in
+            guard value != newValue else { return }
+            isSelfUpdate = true
+            value = newValue
         }
     }
 }

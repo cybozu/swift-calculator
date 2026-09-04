@@ -1,6 +1,6 @@
 import Foundation
 
-enum Digit: CustomStringConvertible, Equatable {
+enum Digit: Equatable, Sendable, CustomStringConvertible {
     case number(Int)
     case period
 
@@ -30,5 +30,9 @@ extension Digit {
 extension [Digit] {
     init(decimalValue: Decimal) {
         self = String(describing: decimalValue).compactMap(Digit.init)
+        // An operand must not hold an empty digit sequence, so NaN falls back to zero.
+        if isEmpty {
+            self = [.number(0)]
+        }
     }
 }
