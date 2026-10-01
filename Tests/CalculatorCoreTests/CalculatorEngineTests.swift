@@ -1511,21 +1511,35 @@ struct CalculatorEngineTests {
 
     @Test(arguments: [
         .init(
-            tokens: .init("2+2"),
-            expectedTokens: .init("4")
+            premise: .init(
+                isEditingOperand: true,
+                tokens: .init("2+2")
+            ),
+            expect: .init(
+                isEditingOperand: false,
+                tokens: .init("4")
+            )
         ),
         .init(
-            tokens: .init("5"),
-            expectedTokens: .init("5")
+            premise: .init(
+                isEditingOperand: true,
+                tokens: .init("5")
+            ),
+            expect: .init(
+                isEditingOperand: false,
+                tokens: .init("5")
+            )
         ),
-    ] as [CalculatedCondition])
-    func handle_calculate_clears_a_stale_error(_ condition: CalculatedCondition) {
+    ] as [Condition])
+    func handle_calculate_clears_a_stale_error(_ condition: Condition) {
         var sut = CalculatorEngine()
         sut.error = .undefined
-        sut.tokens = condition.tokens
+        sut.isEditingOperand = condition.premise.isEditingOperand
+        sut.tokens = condition.premise.tokens
         sut.handleCalculate()
         #expect(sut.error == nil)
-        #expect(sut.tokens == condition.expectedTokens)
+        #expect(sut.isEditingOperand == condition.expect.isEditingOperand)
+        #expect(sut.tokens == condition.expect.tokens)
     }
 
     @Test(arguments: [-1, 10, 42])
