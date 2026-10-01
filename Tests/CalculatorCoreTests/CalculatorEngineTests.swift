@@ -1424,14 +1424,15 @@ struct CalculatorEngineTests {
         #expect(sut.tokens == condition.expect.tokens)
     }
 
-    @Test
-    func handle_calculate_skipped() {
+    @Test(arguments: ["1×-", "1+2+"])
+    func handle_calculate_skipped(_ formula: String) {
         var sut = CalculatorEngine()
         sut.isEditingOperand = true
-        sut.tokens = .init("1×-")
+        sut.tokens = .init(formula)
         sut.handleCalculate()
         #expect(sut.isEditingOperand)
-        #expect(sut.tokens == .init("1×-"))
+        #expect(sut.tokens == .init(formula))
+        #expect(sut.error == nil)
     }
 
     @Test
@@ -1508,14 +1509,23 @@ struct CalculatorEngineTests {
         #expect(sut.tokens == condition.expect.tokens)
     }
 
-    @Test
-    func handle_calculate_clears_a_stale_error() {
+    @Test(arguments: [
+        .init(
+            tokens: .init("2+2"),
+            expectedTokens: .init("4")
+        ),
+        .init(
+            tokens: .init("5"),
+            expectedTokens: .init("5")
+        ),
+    ] as [CalculatedCondition])
+    func handle_calculate_clears_a_stale_error(_ condition: CalculatedCondition) {
         var sut = CalculatorEngine()
         sut.error = .undefined
-        sut.tokens = .init("2+2")
+        sut.tokens = condition.tokens
         sut.handleCalculate()
         #expect(sut.error == nil)
-        #expect(sut.tokens == .init("4"))
+        #expect(sut.tokens == condition.expectedTokens)
     }
 
     @Test(arguments: [-1, 10, 42])

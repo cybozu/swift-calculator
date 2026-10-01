@@ -143,36 +143,41 @@ extension [Token] {
         }
         var copy = self
 
-        let operations: [Operation] = [
-            .init(
-                operator: .modulus,
-                needsZeroValidation: true,
-                perform: { $0.remainderValue(by: $1) }
-            ),
-            .init(
-                operator: .division,
-                needsZeroValidation: true,
-                perform: { $0.dividingValue(by: $1) }
-            ),
-            .init(
-                operator: .multiplication,
-                needsZeroValidation: false,
-                perform: { $0.multiplyingValue(by: $1) }
-            ),
-            .init(
-                operator: .subtraction,
-                needsZeroValidation: false,
-                perform: { $0.subtractingValue(with: $1) }
-            ),
-            .init(
-                operator: .addition,
-                needsZeroValidation: false,
-                perform: { $0.addingValue(with: $1) }
-            ),
+        // Operations in the same group share a precedence and are evaluated from left to right.
+        let precedenceGroups: [[Operation]] = [
+            [
+                .init(
+                    operator: .modulus,
+                    needsZeroValidation: true,
+                    perform: { $0.remainderValue(by: $1) }
+                ),
+                .init(
+                    operator: .division,
+                    needsZeroValidation: true,
+                    perform: { $0.dividingValue(by: $1) }
+                ),
+                .init(
+                    operator: .multiplication,
+                    needsZeroValidation: false,
+                    perform: { $0.multiplyingValue(by: $1) }
+                ),
+            ],
+            [
+                .init(
+                    operator: .subtraction,
+                    needsZeroValidation: false,
+                    perform: { $0.subtractingValue(with: $1) }
+                ),
+                .init(
+                    operator: .addition,
+                    needsZeroValidation: false,
+                    perform: { $0.addingValue(with: $1) }
+                ),
+            ],
         ]
 
-        for operation in operations {
-            while copy.count > 2, let index = copy.firstBinaryOperatorIndex(of: operation.operator) {
+        for precedenceGroup in precedenceGroups {
+            while case let (index, operation)? = copy.firstBinaryOperation(in: precedenceGroup) {
                 guard let beforeSignedOperand = copy.signedOperand(before: index),
                       let afterSignedOperand = copy.signedOperand(after: index) else {
                     throw CalculationError.invalidFormula(.incompleteFormula)
@@ -182,11 +187,13 @@ extension [Token] {
                         throw CalculationError.undefined
                     }
                 }
+                let value = operation.perform(beforeSignedOperand, afterSignedOperand)
+                // A result beyond the range of Decimal is NaN, which the token initializer would turn into zero.
+                guard !value.isNaN else {
+                    throw CalculationError.undefined
+                }
                 copy.remove(at: index - beforeSignedOperand.cost, count: beforeSignedOperand.cost + 1 + afterSignedOperand.cost)
-                copy.insert(
-                    contentsOf: [Token](decimalValue: operation.perform(beforeSignedOperand, afterSignedOperand)),
-                    at: index - beforeSignedOperand.cost
-                )
+                copy.insert(contentsOf: [Token](decimalValue: value), at: index - beforeSignedOperand.cost)
             }
         }
 
@@ -195,16 +202,22 @@ extension [Token] {
         } else if copy.count == 2, case .operator(.subtraction) = copy.first, case let .operand(value) = copy.last {
             return [.operator(.subtraction), .operand(.init(digits: value.digits))]
         } else {
-            throw CalculationError.undefined
+            throw CalculationError.invalidFormula(.incompleteFormula)
         }
     }
 }
 
 extension [Token] {
     // A subtraction that follows another operator is a sign, not a binary operator.
-    private func firstBinaryOperatorIndex(of operator: Operator) -> Int? {
-        indices.dropFirst().first { index in
-            self[index] == .operator(`operator`) && self[index - 1].isOperand
+    private func firstBinaryOperation(in operations: [Operation]) -> (index: Int, operation: Operation)? {
+        for index in indices.dropFirst() {
+            guard case let .operator(value) = self[index],
+                  self[index - 1].isOperand,
+                  let operation = operations.first(where: { $0.operator == value }) else {
+                continue
+            }
+            return (index, operation)
         }
+        return nil
     }
 }

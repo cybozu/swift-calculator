@@ -168,6 +168,7 @@ public struct CalculatorEngine {
                 // but the equal input confirms it as the result.
                 if tokens.isSettledValue {
                     isEditingOperand = false
+                    self.error = nil
                 }
             }
         } catch {

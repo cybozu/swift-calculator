@@ -225,11 +225,23 @@ struct TokenTests {
             expectedError: .invalidFormula(.incompleteFormula)
         ),
         .init(
+            tokens: .init("1+2+"),
+            expectedError: .invalidFormula(.incompleteFormula)
+        ),
+        .init(
+            tokens: [.operand(.init(1)), .operand(.init(2)), .operand(.init(3))],
+            expectedError: .invalidFormula(.incompleteFormula)
+        ),
+        .init(
             tokens: .init("1÷0"),
             expectedError: .undefined
         ),
         .init(
             tokens: .init("1%0"),
+            expectedError: .undefined
+        ),
+        .init(
+            tokens: [Token](decimalValue: .greatestFiniteMagnitude) + [Token]("×10"),
             expectedError: .undefined
         ),
     ] as [ErrorCondition])
@@ -262,6 +274,25 @@ struct TokenTests {
         ),
     ] as [CalculatedCondition])
     func calculated_easy_expression(_ condition: CalculatedCondition) throws {
+        let actual = try condition.tokens.calculated()
+        #expect(actual == condition.expectedTokens)
+    }
+
+    @Test(arguments: [
+        .init(
+            tokens: .init("8÷3%2"),
+            expectedTokens: [.operand(.init(0.6666667))]
+        ),
+        .init(
+            tokens: .init("2×7%4"),
+            expectedTokens: [.operand(.init(2))]
+        ),
+        .init(
+            tokens: .init("3×1÷3"),
+            expectedTokens: [.operand(.init(1))]
+        ),
+    ] as [CalculatedCondition])
+    func calculated_same_precedence_expression(_ condition: CalculatedCondition) throws {
         let actual = try condition.tokens.calculated()
         #expect(actual == condition.expectedTokens)
     }

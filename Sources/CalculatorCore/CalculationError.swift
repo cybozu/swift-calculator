@@ -4,7 +4,7 @@ import Foundation
 public enum CalculationError: LocalizedError, Equatable {
     /// The tokens do not form a calculable formula.
     case invalidFormula(InvalidFormulaReason)
-    /// The calculation result is not defined, such as a division by zero.
+    /// The calculation result is not defined, such as a division by zero or a result beyond the range of `Decimal`.
     case undefined
 
     /// A localized message describing what error occurred.
