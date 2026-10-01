@@ -29,7 +29,7 @@ jobs:
         shell: bash
         run: |
           xcodebuild test \
-            -scheme swift-calculator \
+            -scheme swift-calculator-Package \
             -destination "platform=macOS,arch=arm64" \
             -derivedDataPath DerivedData \
             -resultBundlePath TestResults/unit_test_result_bundle | \

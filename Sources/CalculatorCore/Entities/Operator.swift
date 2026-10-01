@@ -1,12 +1,17 @@
-import SwiftUI
-
 /// A type that represents the calculation operator.
 public enum Operator: String, Sendable, CaseIterable, CustomStringConvertible {
+    /// The addition operator (+).
     case addition
+    /// The subtraction operator (-).
     case subtraction
+    /// The multiplication operator (×).
     case multiplication
+    /// The division operator (÷).
     case division
+    /// The modulus operator (%). The result takes the sign of the dividend.
     case modulus
+    /// The equal sign (=) that folds the formula before it into a result.
+    case equal
 
     /// A string that represents the calculation operator.
     public var description: String {
@@ -21,22 +26,8 @@ public enum Operator: String, Sendable, CaseIterable, CustomStringConvertible {
             "÷"
         case .modulus:
             "%"
-        }
-    }
-
-    /// An Image that represents the calculation operator.
-    public var image: Image {
-        switch self {
-        case .addition:
-            Image(systemName: "plus")
-        case .subtraction:
-            Image(systemName: "minus")
-        case .multiplication:
-            Image(systemName: "multiply")
-        case .division:
-            Image(systemName: "divide")
-        case .modulus:
-            Image(systemName: "percent")
+        case .equal:
+            "="
         }
     }
 }

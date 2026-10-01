@@ -22,7 +22,7 @@ final class ExampleUITests: XCTestCase {
         calcPicker.buttons["number6Button"].tap()
         calcPicker.buttons["additionButton"].tap()
         calcPicker.buttons["number7Button"].tap()
-        calcPicker.buttons["calculateButton"].tap()
+        calcPicker.buttons["equalButton"].tap()
 
         try await Task.sleep(for: .seconds(1.5))
 

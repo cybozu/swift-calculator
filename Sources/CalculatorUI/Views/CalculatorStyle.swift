@@ -46,6 +46,9 @@ public struct ClassicCalculatorStyle: CalculatorStyle {
         self.buttonBorderShape = buttonBorderShape
     }
 
+    /// Creates a view that represents the body of a calculator view.
+    /// - Parameters:
+    ///   - configuration: The properties of the calculator view.
     public func makeBody(configuration: ClassicCalculatorStyle.Configuration) -> some View {
         ClassicCalculatorView(
             configuration: configuration,
@@ -81,6 +84,9 @@ public struct DefaultCalculatorStyle: CalculatorStyle {
     /// Creates a default calculator view style.
     public init() {}
 
+    /// Creates a view that represents the body of a calculator view.
+    /// - Parameters:
+    ///   - configuration: The properties of the calculator view.
     public func makeBody(configuration: DefaultCalculatorStyle.Configuration) -> some View {
         ClassicCalculatorStyle().makeBody(configuration: configuration)
     }

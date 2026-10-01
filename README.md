@@ -25,6 +25,11 @@ Calculator is a Swift package that provides an inline calculator with SwiftUI AP
 
 ## Usage
 
+This package provides two library products:
+
+- `CalculatorUI`: SwiftUI calculator views.
+- `CalculatorCore`: the calculation engine with no dependency on UI.
+
 If you want to use the classic preset calculator:
 
 ```swift
@@ -32,7 +37,7 @@ import CalculatorUI
 import SwiftUI
 
 struct ContentView: View {
-    @State var value: String = ""
+    @State var value: Decimal?
 
     var body: some View {
         Calculator(value: $value)
@@ -80,13 +85,52 @@ extension CalculatorStyle where Self == CustomCalculatorStyle {
 }
 
 struct ContentView: View {
-    @State var value: String = ""
+    @State var value: Decimal?
 
     var body: some View {
         Calculator(value: $value)
             .calculatorStyle(.custom)
     }
 }
+```
+
+If you want to use only the calculation logic without any views, build a formula in either of two ways:
+
+```swift
+import CalculatorCore
+
+// 1. Build a token sequence directly.
+//    1+1=+1= is interpreted as ((1+1)+1).
+let tokens: [Token] = [
+    .operand(.init(decimalValue: 1)),
+    .operator(.addition),
+    .operand(.init(decimalValue: 1)),
+    .operator(.equal),
+    .operator(.addition),
+    .operand(.init(decimalValue: 1)),
+    .operator(.equal),
+]
+
+// 2. Drive CalculatorEngine as if pressing calculator buttons.
+var engine = CalculatorEngine()
+engine.handle(number: 1)
+engine.handle(operator: .addition)
+engine.handle(number: 1)
+engine.handle(operator: .equal)
+engine.handle(operator: .addition)
+engine.handle(number: 1)
+engine.handle(operator: .equal)
+// engine.tokens now holds the calculated tokens.
+```
+
+Then take the calculated result out of the tokens:
+
+```swift
+// As a decimal value:
+let value = try tokens.calculatedDecimalValue() // Decimal(3)
+
+// As a string, or a localized error description when the calculation fails:
+let string = CalculatorFormatter().string(from: tokens) // "3"
 ```
 
 ## Privacy Manifest
