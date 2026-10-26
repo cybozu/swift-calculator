@@ -27,30 +27,10 @@ struct ClassicCalculatorView: View {
                 fontSize: 1.5 * buttonFontSize,
                 width: width
             )
-            Grid(horizontalSpacing: spacing, verticalSpacing: spacing) {
-                ForEach(Array(configuration.rows.enumerated()), id: \.element.id) { offset, row in
-                    GridRow {
-                        ForEach(row.cells) { cell in
-                            Button {
-                                configuration.trigger(cell.role)
-                            } label: {
-                                ZStack {
-                                    Text(verbatim: "AC").hidden()
-                                    cell.role.text
-                                }
-                                .font(.system(size: buttonFontSize, weight: .bold))
-                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                                .foregroundStyle(Color.white)
-                            }
-                            .tint(Area(rowIndex: offset, rowLast: row.cells.last?.id == cell.id).color)
-                            .buttonStyle(.borderedProminent)
-                            .buttonBorderShape(buttonBorderShape)
-                            .accessibilityIdentifier(cell.role.accessibilityIdentifier)
-                        }
-                    }
-                }
+            ViewThatFits(in: .horizontal) {
+                grid.fixedSize()
+                grid.fixedSize(horizontal: false, vertical: true)
             }
-            .fixedSize()
             .background {
                 GeometryReader { proxy in
                     Color.clear.preference(
@@ -69,5 +49,33 @@ struct ClassicCalculatorView: View {
         .background(Color.background, in: .rect(cornerRadius: cornerRadius))
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("calculator")
+    }
+
+    private var grid: some View {
+        Grid(horizontalSpacing: spacing, verticalSpacing: spacing) {
+            ForEach(Array(configuration.rows.enumerated()), id: \.element.id) { offset, row in
+                GridRow {
+                    ForEach(row.cells) { cell in
+                        Button {
+                            configuration.trigger(cell.role)
+                        } label: {
+                            ZStack {
+                                Text(verbatim: "AC").hidden()
+                                cell.role.text
+                            }
+                            .font(.system(size: buttonFontSize, weight: .bold))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                            .foregroundStyle(Color.white)
+                        }
+                        .tint(Area(rowIndex: offset, rowLast: row.cells.last?.id == cell.id).color)
+                        .buttonStyle(.borderedProminent)
+                        .buttonBorderShape(buttonBorderShape)
+                        .accessibilityIdentifier(cell.role.accessibilityIdentifier)
+                    }
+                }
+            }
+        }
     }
 }

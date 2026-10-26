@@ -44,6 +44,8 @@ struct ContentView: View {
 }
 ```
 
+The classic calculator keeps its natural width when there is enough room, and shrinks to the proposed width (scaling the button labels down) when the container is narrower. Wrap it in `.frame(minWidth:)` if you want to stop it from shrinking below a certain width.
+
 If you want to create your own preferred calculator interface:
 
 ```swift
