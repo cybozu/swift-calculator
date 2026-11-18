@@ -57,7 +57,7 @@ final class CalculatorState {
 
     var value: Decimal? {
         get {
-            guard !engine.isEditingOperand, engine.tokens.isSettledValue else {
+            guard engine.tokens.isSettledValue else {
                 return nil
             }
             return try? engine.tokens.calculatedDecimalValue()
