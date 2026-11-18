@@ -117,7 +117,7 @@ struct CalculatorStateTests {
     }
 
     @Test
-    func decimalValue_is_published_only_when_settled() {
+    func decimalValue_is_published_only_while_a_single_number_is_displayed() {
         let sut = CalculatorState()
         #expect(sut.value == nil)
         sut.onTap(.number(1))
@@ -127,7 +127,17 @@ struct CalculatorStateTests {
         sut.onTap(.operator(.equal))
         #expect(sut.value == 3)
         sut.onTap(.number(5))
-        #expect(sut.value == nil)
+        #expect(sut.value == 5)
+    }
+
+    @Test
+    func decimalValue_is_published_while_editing_a_single_operand() {
+        let sut = CalculatorState()
+        sut.onTap(.number(1))
+        sut.onTap(.number(2))
+        sut.onTap(.period)
+        sut.onTap(.number(5))
+        #expect(sut.value == 12.5)
     }
 
     @Test
@@ -217,7 +227,6 @@ struct CalculatorStateTests {
     func equal_on_a_single_operand_publishes_the_value() {
         let sut = CalculatorState()
         sut.onTap(.number(5))
-        #expect(sut.value == nil)
         #expect(sut.isEditingFormula)
         sut.onTap(.operator(.equal))
         #expect(sut.value == 5)
@@ -251,7 +260,7 @@ struct CalculatorStateTests {
         sut.onTap(.number(2))
         sut.onTap(.operator(.equal))
         sut.onTap(.command(.delete))
-        #expect(sut.value == nil)
+        #expect(sut.value == 1)
         sut.onTap(.number(5))
         #expect(sut.expression == "15")
     }
