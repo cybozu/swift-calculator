@@ -112,14 +112,13 @@ struct CalculatorStateTests {
         let sut = CalculatorState()
         sut.value = 3
         sut.value = nil
-        #expect(sut.value == nil)
+        #expect(sut.value == 0)
         #expect(sut.expression == "0")
     }
 
     @Test
     func decimalValue_is_published_only_while_a_single_number_is_displayed() {
         let sut = CalculatorState()
-        #expect(sut.value == nil)
         sut.onTap(.number(1))
         sut.onTap(.operator(.addition))
         sut.onTap(.number(2))
@@ -138,6 +137,50 @@ struct CalculatorStateTests {
         sut.onTap(.period)
         sut.onTap(.number(5))
         #expect(sut.value == 12.5)
+    }
+
+    @Test
+    func decimalValue_is_zero_initially() {
+        let sut = CalculatorState()
+        #expect(sut.value == 0)
+    }
+
+    @Test
+    func decimalValue_is_zero_after_all_clear() {
+        let sut = CalculatorState()
+        sut.onTap(.number(1))
+        sut.onTap(.operator(.addition))
+        sut.onTap(.command(.allClear))
+        #expect(sut.value == 0)
+    }
+
+    @Test
+    func decimalValue_is_zero_after_deleting_the_last_digit() {
+        let sut = CalculatorState()
+        sut.onTap(.number(5))
+        sut.onTap(.command(.delete))
+        #expect(sut.value == 0)
+    }
+
+    @Test
+    func decimalValue_is_nil_while_an_error_is_displayed() {
+        let sut = CalculatorState()
+        sut.onTap(.number(1))
+        sut.onTap(.operator(.division))
+        sut.onTap(.number(0))
+        sut.onTap(.operator(.equal))
+        #expect(sut.value == nil)
+    }
+
+    @Test
+    func decimalValue_is_zero_after_all_clear_over_an_error() {
+        let sut = CalculatorState()
+        sut.onTap(.number(1))
+        sut.onTap(.operator(.division))
+        sut.onTap(.number(0))
+        sut.onTap(.operator(.equal))
+        sut.onTap(.command(.allClear))
+        #expect(sut.value == 0)
     }
 
     @Test

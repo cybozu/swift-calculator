@@ -11,9 +11,10 @@ public struct Calculator: View {
     /// Creates new calculator view.
     /// - Parameters:
     ///   - value: The decimal value displayed by the calculator.
-    ///     It is nil while a formula with an operator is displayed or when the calculation failed.
-    ///     Assigning a value resets the calculator to it, and assigning nil over
-    ///     a settled value clears the calculator.
+    ///     It is zero while the calculator is cleared, and nil while a formula with an operator
+    ///     is displayed or when the calculation failed.
+    ///     Assigning a value resets the calculator to it, and assigning nil clears the calculator,
+    ///     which then publishes zero.
     public init(value: Binding<Decimal?>) {
         _value = value
         state.value = value.wrappedValue

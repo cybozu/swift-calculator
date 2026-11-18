@@ -57,6 +57,12 @@ final class CalculatorState {
 
     var value: Decimal? {
         get {
+            guard engine.error == nil else {
+                return nil
+            }
+            guard !engine.tokens.isEmpty else {
+                return .zero
+            }
             guard engine.tokens.isSettledValue else {
                 return nil
             }
