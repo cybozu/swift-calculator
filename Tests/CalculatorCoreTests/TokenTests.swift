@@ -29,135 +29,6 @@ struct TokenTests {
 
     @Test(arguments: [
         .init(
-            tokens: .init("1×-2"),
-            at: 1,
-            count: 3,
-            expectedTokens: [.operand(.init(1))]
-        ),
-        .init(
-            tokens: .init("1×-2"),
-            at: 2,
-            count: 1,
-            expectedTokens: [.operand(.init(1)), .operator(.multiplication), .operand(.init(2))]
-        ),
-    ] as [RemoveCondition])
-    func remove(_ condition: RemoveCondition) {
-        var actual = condition.tokens
-        actual.remove(at: condition.at, count: condition.count)
-        #expect(actual == condition.expectedTokens)
-    }
-
-    @Test(arguments: [
-        .init(
-            tokens: [],
-            index: 0,
-            expectedSignedOperand: nil
-        ),
-        .init(
-            tokens: [],
-            index: 1,
-            expectedSignedOperand: nil
-        ),
-        .init(
-            tokens: [],
-            index: -1,
-            expectedSignedOperand: nil
-        ),
-        .init(
-            tokens: .init("1"),
-            index: 0,
-            expectedSignedOperand: nil
-        ),
-        .init(
-            tokens: .init("-1"),
-            index: 1,
-            expectedSignedOperand: nil
-        ),
-        .init(
-            tokens: .init("1+2"),
-            index: 1,
-            expectedSignedOperand: .init(value: 1, cost: 1)
-        ),
-        .init(
-            tokens: .init("-1+2"),
-            index: 2,
-            expectedSignedOperand: .init(value: -1, cost: 2)
-        ),
-        .init(
-            tokens: .init("1+2+3"),
-            index: 3,
-            expectedSignedOperand: .init(value: 2, cost: 1)
-        ),
-        .init(
-            tokens: .init("1-2+3"),
-            index: 3,
-            expectedSignedOperand: .init(value: 2, cost: 1)
-        ),
-        .init(
-            tokens: .init("1×-2"),
-            index: 2,
-            expectedSignedOperand: nil
-        ),
-    ] as [SignedOperandCondition])
-    func signedOperand_before(_ condition: SignedOperandCondition) {
-        let actual = condition.tokens.signedOperand(before: condition.index)
-        #expect(actual == condition.expectedSignedOperand)
-    }
-
-    @Test(arguments: [
-        .init(
-            tokens: [],
-            index: 0,
-            expectedSignedOperand: nil
-        ),
-        .init(
-            tokens: [],
-            index: 1,
-            expectedSignedOperand: nil
-        ),
-        .init(
-            tokens: [],
-            index: -1,
-            expectedSignedOperand: nil
-        ),
-        .init(
-            tokens: .init("1"),
-            index: 0,
-            expectedSignedOperand: nil
-        ),
-        .init(
-            tokens: .init("1-"),
-            index: 0,
-            expectedSignedOperand: nil
-        ),
-        .init(
-            tokens: .init("1+2"),
-            index: 1,
-            expectedSignedOperand: .init(value: 2, cost: 1)
-        ),
-        .init(
-            tokens: .init("1×-2"),
-            index: 1,
-            expectedSignedOperand: .init(value: -2, cost: 2)
-        ),
-        .init(
-            tokens: .init("1+2+3"),
-            index: 1,
-            expectedSignedOperand: .init(value: 2, cost: 1)
-        ),
-        .init(
-            tokens: .init("1×-2"),
-            index: 0,
-            expectedSignedOperand: nil
-        ),
-    ] as [SignedOperandCondition])
-    func signedOperand_after(_ condition: SignedOperandCondition) {
-        let actual = condition.tokens.signedOperand(after: condition.index)
-        #expect(actual == condition.expectedSignedOperand)
-    }
-
-    @Test(arguments: [
-        .init(
             tokens: .init("1+1"),
             expectedTokens: [.operand(.init(2))]
         ),
@@ -230,6 +101,10 @@ struct TokenTests {
         ),
         .init(
             tokens: [.operand(.init(1)), .operand(.init(2)), .operand(.init(3))],
+            expectedError: .invalidFormula(.incompleteFormula)
+        ),
+        .init(
+            tokens: .init("1÷0+"),
             expectedError: .invalidFormula(.incompleteFormula)
         ),
         .init(
@@ -461,19 +336,6 @@ struct TokenTests {
 struct TokensCondition {
     var decimalValue: Decimal
     var expectedTokens: [Token]
-}
-
-struct RemoveCondition {
-    var tokens: [Token]
-    var at: Int
-    var count: Int
-    var expectedTokens: [Token]
-}
-
-struct SignedOperandCondition {
-    var tokens: [Token]
-    var index: Int
-    var expectedSignedOperand: SignedOperand?
 }
 
 struct CalculatedCondition {

@@ -16,14 +16,6 @@ public enum Token: Equatable, Sendable, CustomStringConvertible {
             String(describing: value)
         }
     }
-
-    var isOperand: Bool {
-        if case .operand = self {
-            true
-        } else {
-            false
-        }
-    }
 }
 
 extension [Token] {
@@ -39,55 +31,11 @@ extension [Token] {
         append(.operand(.init(digits: [Digit](decimalValue: decimalValue.magnitude))))
     }
 
-    mutating func remove(at: Int, count: Int) {
-        guard at + count <= self.count else {
-            fatalError("Error: out of range")
-        }
-        for _ in 0 ..< count {
-            remove(at: at)
-        }
-    }
-
-    func signedOperand(before index: Int) -> SignedOperand? {
-        guard (0 ..< count).contains(index) else {
-            return nil
-        }
-        guard 0 < index,
-              case let .operand(beforeOperand) = self[index - 1],
-              let value = beforeOperand.decimalValue else {
-            return nil
-        }
-        // A subtraction preceded by an operand is a binary operator, not a sign.
-        guard 1 < index,
-              case .operator(.subtraction) = self[index - 2],
-              index == 2 || !self[index - 3].isOperand else {
-            return SignedOperand(value: value, cost: 1)
-        }
-        return SignedOperand(value: -value, cost: 2)
-    }
-
-    func signedOperand(after index: Int) -> SignedOperand? {
-        guard (0 ..< count).contains(index) else {
-            return nil
-        }
-        if index < count - 1,
-           case let .operand(afterOperand) = self[index + 1],
-           let value = afterOperand.decimalValue {
-            return SignedOperand(value: value, cost: 1)
-        }
-        guard index < count - 2,
-              case .operator(.subtraction) = self[index + 1],
-              case let .operand(afterOperand) = self[index + 2],
-              let value = afterOperand.decimalValue else {
-            return nil
-        }
-        return SignedOperand(value: -value, cost: 2)
-    }
-
     /// Whether the tokens represent a settled value: a lone value,
-    /// or a formula closed by the equal operator, such as an engine's stack right after the equal input.
+    /// or a calculable formula closed by the equal operator, such as an engine's stack right after the equal input.
+    /// The calculated value of settled tokens is always available through ``calculatedDecimalValue()``.
     public var isSettledValue: Bool {
-        loneValue != nil || endsWithEqual
+        loneValue != nil || (endsWithEqual && (try? evaluated()) != nil)
     }
 
     /// The value of the tokens when they hold a lone value, such as `5` or `-5`.
@@ -119,16 +67,20 @@ extension [Token] {
         return value
     }
 
-    /// Returns the calculated result of the tokens as a lone value.
+    /// Returns the calculated result of the tokens as a lone value, rounded to the significant digits.
+    func calculated() throws -> [Token] {
+        [Token](decimalValue: try evaluated().decimalValue.roundingValue())
+    }
+
+    /// Returns the exact result of the tokens without rounding.
     ///
     /// A formula continued after an equal sign takes the result before it as its first operand,
     /// so `1÷3=×3` is calculated as `(1÷3)×3`.
-    /// Only the final result is rounded, and the results before the equal signs keep their full precision.
-    func calculated() throws -> [Token] {
+    func evaluated() throws -> Number {
         guard !isEmpty else {
             throw CalculationError.invalidFormula(.incompleteFormula)
         }
-        var result: [Token]?
+        var result: Number?
         for segment in split(separator: .operator(.equal), omittingEmptySubsequences: false) {
             guard let first = segment.first else {
                 guard result != nil else {
@@ -136,100 +88,99 @@ extension [Token] {
                 }
                 continue
             }
-            let formula: [Token]
-            if case .operator = first {
-                formula = (result ?? []) + segment
-            } else if result == nil {
-                formula = Array(segment)
-            } else {
+            if case .operand = first, result != nil {
                 throw CalculationError.invalidFormula(.operandAfterResult)
             }
-            result = try formula.calculatedFormula()
+            result = try Formula(leading: result, tokens: segment).evaluated()
         }
-        guard let value = result?.loneValue else {
+        guard let result else {
             throw CalculationError.invalidFormula(.incompleteFormula)
         }
-        return [Token](decimalValue: value.roundingValue())
-    }
-
-    private func calculatedFormula() throws -> [Token] {
-        guard count >= 3 else {
-            throw CalculationError.invalidFormula(.incompleteFormula)
-        }
-        var copy = self
-
-        // Operations in the same group share a precedence and are evaluated from left to right.
-        let precedenceGroups: [[Operation]] = [
-            [
-                .init(
-                    operator: .modulus,
-                    needsZeroValidation: true,
-                    perform: { $0.remainderValue(by: $1) }
-                ),
-                .init(
-                    operator: .division,
-                    needsZeroValidation: true,
-                    perform: { $0.dividingValue(by: $1) }
-                ),
-                .init(
-                    operator: .multiplication,
-                    needsZeroValidation: false,
-                    perform: { $0.multiplyingValue(by: $1) }
-                ),
-            ],
-            [
-                .init(
-                    operator: .subtraction,
-                    needsZeroValidation: false,
-                    perform: { $0.subtractingValue(with: $1) }
-                ),
-                .init(
-                    operator: .addition,
-                    needsZeroValidation: false,
-                    perform: { $0.addingValue(with: $1) }
-                ),
-            ],
-        ]
-
-        for precedenceGroup in precedenceGroups {
-            while case let (index, operation)? = copy.firstBinaryOperation(in: precedenceGroup) {
-                guard let beforeSignedOperand = copy.signedOperand(before: index),
-                      let afterSignedOperand = copy.signedOperand(after: index) else {
-                    throw CalculationError.invalidFormula(.incompleteFormula)
-                }
-                if operation.needsZeroValidation {
-                    guard !afterSignedOperand.value.isZero else {
-                        throw CalculationError.undefined
-                    }
-                }
-                let value = operation.perform(beforeSignedOperand, afterSignedOperand)
-                // A result beyond the range of Decimal is NaN, which the token initializer would turn into zero.
-                guard !value.isNaN else {
-                    throw CalculationError.undefined
-                }
-                copy.remove(at: index - beforeSignedOperand.cost, count: beforeSignedOperand.cost + 1 + afterSignedOperand.cost)
-                copy.insert(contentsOf: [Token](decimalValue: value), at: index - beforeSignedOperand.cost)
-            }
-        }
-
-        guard let value = copy.loneValue else {
-            throw CalculationError.invalidFormula(.incompleteFormula)
-        }
-        return [Token](decimalValue: value)
+        return result
     }
 }
 
-extension [Token] {
-    // A subtraction that follows another operator is a sign, not a binary operator.
-    private func firstBinaryOperation(in operations: [Operation]) -> (index: Int, operation: Operation)? {
-        for index in indices.dropFirst() {
-            guard case let .operator(value) = self[index],
-                  self[index - 1].isOperand,
-                  let operation = operations.first(where: { $0.operator == value }) else {
-                continue
+/// A formula between equal signs, read as alternating values and operators.
+private struct Formula {
+    var values: [Number]
+    var operators: [Operator]
+
+    /// Reads the tokens, taking a subtraction that does not follow a value as the sign of the next operand.
+    init(leading: Number?, tokens: ArraySlice<Token>) throws {
+        values = leading.map { [$0] } ?? []
+        operators = []
+        var isNegative = false
+        for token in tokens {
+            switch token {
+            case let .operand(operand):
+                guard values.count == operators.count, let value = Number(operand) else {
+                    throw CalculationError.invalidFormula(.incompleteFormula)
+                }
+                values.append(isNegative ? value.negated : value)
+                isNegative = false
+            case .operator(.subtraction) where values.count == operators.count && !isNegative:
+                isNegative = true
+            case let .operator(value):
+                guard values.count == operators.count + 1, !isNegative else {
+                    throw CalculationError.invalidFormula(.incompleteFormula)
+                }
+                operators.append(value)
             }
-            return (index, operation)
         }
-        return nil
+        // A lone value is not a formula, and a formula must not end with an operator or a sign.
+        guard !operators.isEmpty, values.count == operators.count + 1, !isNegative else {
+            throw CalculationError.invalidFormula(.incompleteFormula)
+        }
+    }
+
+    /// Calculates %, ÷, and × before - and +, each from left to right.
+    func evaluated() throws -> Number {
+        var terms = [values[0]]
+        var lowOperators = [Operator]()
+        for (value, rhs) in zip(operators, values.dropFirst()) {
+            switch value {
+            case .multiplication, .division, .modulus:
+                terms[terms.count - 1] = try Self.operate(terms[terms.count - 1], value, rhs)
+            case .addition, .subtraction, .equal:
+                lowOperators.append(value)
+                terms.append(rhs)
+            }
+        }
+        var result = terms[0]
+        for (value, rhs) in zip(lowOperators, terms.dropFirst()) {
+            result = try Self.operate(result, value, rhs)
+        }
+        return result
+    }
+
+    private static func operate(_ lhs: Number, _ value: Operator, _ rhs: Number) throws -> Number {
+        let result: Number = switch value {
+        case .addition:
+            lhs.adding(rhs)
+        case .subtraction:
+            lhs.subtracting(rhs)
+        case .multiplication:
+            lhs.multiplied(by: rhs)
+        case .division:
+            try lhs.divided(by: rhs.nonZero())
+        case .modulus:
+            try lhs.truncatingRemainder(dividingBy: rhs.nonZero())
+        case .equal:
+            throw CalculationError.invalidFormula(.incompleteFormula)
+        }
+        // A result beyond the range of Decimal is NaN.
+        if case let .approximate(decimal) = result, decimal.isNaN {
+            throw CalculationError.undefined
+        }
+        return result
+    }
+}
+
+private extension Number {
+    func nonZero() throws -> Number {
+        guard !isZero else {
+            throw CalculationError.undefined
+        }
+        return self
     }
 }

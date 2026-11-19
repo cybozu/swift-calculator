@@ -1424,7 +1424,7 @@ struct CalculatorEngineTests {
         #expect(sut.tokens == condition.expect.tokens)
     }
 
-    @Test(arguments: ["1×-", "1+2+"])
+    @Test(arguments: ["1×-", "1+2+", "1÷0+"])
     func handle_calculate_skipped(_ formula: String) {
         var sut = CalculatorEngine()
         sut.isEditingOperand = true

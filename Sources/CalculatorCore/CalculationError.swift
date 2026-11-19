@@ -21,7 +21,7 @@ public enum CalculationError: LocalizedError, Equatable {
 
 /// The grammar rule that made the formula invalid.
 public enum InvalidFormulaReason: Equatable, Sendable {
-    /// The tokens are empty or do not form a foldable formula.
+    /// The tokens are empty or do not form a calculable formula.
     case incompleteFormula
     /// An operand follows a calculated result.
     case operandAfterResult
