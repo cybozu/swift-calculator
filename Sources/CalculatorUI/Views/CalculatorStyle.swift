@@ -4,6 +4,11 @@ import SwiftUI
 public struct CalculatorStyleConfiguration {
     /// The string value representing an expression or calculation result.
     public var value: String
+    /// Whether the value is a formula being edited rather than a settled result or an error message.
+    ///
+    /// A formula being edited reads best from its end, where the next input appears,
+    /// and a long result or error message reads best from its beginning, such as the integer part of `0.333…`.
+    public var isEditingFormula: Bool
     /// An array of row information.
     public var rows: [Row]
     /// The closure to send the role of each calculator button to the calculation engine.

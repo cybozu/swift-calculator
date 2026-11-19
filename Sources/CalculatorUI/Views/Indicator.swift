@@ -2,9 +2,15 @@ import SwiftUI
 
 struct Indicator: View {
     var expression: String
+    var isEditingFormula: Bool
     var fontSize: Double
     var width: Double
     @State private var textFrame = CGRect.zero
+
+    // A formula being edited shows its end, and a settled result or an error message its beginning.
+    private var scrollAnchor: UnitPoint {
+        isEditingFormula ? .trailing : .leading
+    }
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -33,8 +39,11 @@ struct Indicator: View {
             .frame(width: width)
             .mask(ScrollPlace(width: width, frame: textFrame).mask)
             .coordinateSpace(name: "scroll")
-            .onChange(of: expression) { _, newValue in
-                proxy.scrollTo("expression", anchor: .trailing)
+            .onChange(of: expression) {
+                proxy.scrollTo("expression", anchor: scrollAnchor)
+            }
+            .onChange(of: isEditingFormula) {
+                proxy.scrollTo("expression", anchor: scrollAnchor)
             }
         }
     }

@@ -24,6 +24,7 @@ struct ClassicCalculatorView: View {
         VStack(spacing: spacing) {
             Indicator(
                 expression: configuration.value,
+                isEditingFormula: configuration.isEditingFormula,
                 fontSize: 1.5 * buttonFontSize,
                 width: width
             )

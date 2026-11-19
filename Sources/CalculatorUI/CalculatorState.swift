@@ -79,6 +79,11 @@ final class CalculatorState {
         engine.isEditingOperand
     }
 
+    /// Whether the expression is a formula being edited rather than a settled result or an error message.
+    var isEditingFormula: Bool {
+        engine.error == nil && !(engine.tokens.isSettledValue && !engine.isEditingOperand)
+    }
+
     func onTap(_ role: Role) {
         switch role {
         case let .number(value):
@@ -105,7 +110,7 @@ final class CalculatorState {
     }
 
     private func discardSettledResult() {
-        if engine.error != nil || (engine.tokens.isSettledValue && !engine.isEditingOperand) {
+        if !isEditingFormula {
             engine.handleAllClear()
         }
     }

@@ -23,6 +23,7 @@ public struct Calculator: View {
     public var body: some View {
         AnyView(_calculatorStyle.makeBody(configuration: .init(
             value: state.expression,
+            isEditingFormula: state.isEditingFormula,
             rows: state.rows,
             trigger: { state.onTap($0) }
         )))

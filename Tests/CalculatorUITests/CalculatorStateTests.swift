@@ -17,6 +17,41 @@ struct CalculatorStateTests {
     }
 
     @Test
+    func isEditingFormula_is_false_for_a_settled_result() {
+        let sut = CalculatorState()
+        sut.onTap(.number(1))
+        #expect(sut.isEditingFormula)
+        sut.onTap(.operator(.division))
+        sut.onTap(.number(3))
+        #expect(sut.isEditingFormula)
+        sut.onTap(.operator(.equal))
+        #expect(!sut.isEditingFormula)
+        sut.onTap(.operator(.addition))
+        #expect(sut.isEditingFormula)
+    }
+
+    @Test
+    func isEditingFormula_is_false_for_an_assigned_value() {
+        let sut = CalculatorState()
+        sut.value = 1.5
+        #expect(!sut.isEditingFormula)
+        sut.onTap(.number(2))
+        #expect(sut.isEditingFormula)
+    }
+
+    @Test(arguments: [Role.number(2), .operator(.addition)])
+    func isEditingFormula_is_false_for_an_error(nextInput: Role) {
+        let sut = CalculatorState()
+        sut.onTap(.number(1))
+        sut.onTap(.operator(.division))
+        sut.onTap(.number(0))
+        sut.onTap(.operator(.equal))
+        #expect(!sut.isEditingFormula)
+        sut.onTap(nextInput)
+        #expect(sut.isEditingFormula)
+    }
+
+    @Test
     func onTap_period_and_plus_minus() {
         let sut = CalculatorState()
         sut.onTap(.number(1))
@@ -183,9 +218,13 @@ struct CalculatorStateTests {
         let sut = CalculatorState()
         sut.onTap(.number(5))
         #expect(sut.value == nil)
+        #expect(sut.isEditingFormula)
         sut.onTap(.operator(.equal))
         #expect(sut.value == 5)
         #expect(clearCommand(of: sut) == .allClear)
+        // The expression stays "5", and only the editing state changes.
+        #expect(sut.expression == "5")
+        #expect(!sut.isEditingFormula)
     }
 
     @Test
