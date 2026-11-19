@@ -17,6 +17,30 @@ extension Operand {
 }
 
 extension CalculatorEngine {
+    /// Drives the engine through its public inputs, such as `1÷3=±×3=`.
+    /// `±` is the plus-minus, `⌫` is delete, and `C` is clear.
+    mutating func input(_ inputs: String) {
+        for character in inputs {
+            switch character {
+            case "0"..."9":
+                handle(number: Int(String(character))!)
+            case ".":
+                handlePeriod()
+            case "±":
+                handlePlusMinus()
+            case "⌫":
+                handleDelete()
+            case "C":
+                handleClear()
+            default:
+                guard let value = Operator.allCases.first(where: { $0.description == String(character) }) else {
+                    fatalError("Error: \(character) is not a calculator input.")
+                }
+                handle(operator: value)
+            }
+        }
+    }
+
     var expression: String {
         if let error {
             error.localizedDescription

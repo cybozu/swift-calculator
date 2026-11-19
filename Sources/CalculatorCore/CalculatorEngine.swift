@@ -3,6 +3,13 @@ import Foundation
 /// A state machine that builds calculation tokens from calculator button inputs.
 public struct CalculatorEngine {
     /// The tokens that represent the formula under editing.
+    ///
+    /// The equal input does not fold the tokens into the result. It closes the formula with
+    /// ``Operator/equal`` instead, so that `1÷3=×3=` is kept as is and calculated as `(1÷3)×3`
+    /// without rounding the result in between.
+    /// An input that edits the digits of the result, such as a number, the period, clear, or delete,
+    /// first replaces the closed formula with its rounded result.
+    /// The plus-minus negates the result by continuing the formula with `×-1=` instead.
     public internal(set) var tokens = [Token]()
     /// The error that occurred in the last calculation, or `nil` when there is no error.
     public internal(set) var error: CalculationError?
@@ -28,6 +35,7 @@ public struct CalculatorEngine {
         guard (0 ... 9).contains(input) else {
             return
         }
+        settleResult()
         switch tokens.last {
         case var .operand(value):
             if value.digits == [.number(0)] {
@@ -48,6 +56,7 @@ public struct CalculatorEngine {
 
     /// Handles the input of the period button.
     public mutating func handlePeriod() {
+        settleResult()
         switch tokens.last {
         case var .operand(value):
             guard !value.digits.contains(.period) else {
@@ -72,7 +81,7 @@ public struct CalculatorEngine {
             return
         }
         switch tokens.last {
-        case .operand:
+        case .operand, .operator(.equal):
             tokens.append(.operator(input))
         case let .operator(value):
             switch value {
@@ -84,7 +93,7 @@ public struct CalculatorEngine {
                     return
                 }
                 switch tokens.dropLast().last {
-                case .operand:
+                case .operand, .operator(.equal):
                     tokens.removeLast()
                     tokens.append(.operator(input))
                 case .operator:
@@ -112,6 +121,11 @@ public struct CalculatorEngine {
 
     /// Handles the input of the plus-minus button, toggling the sign of the last operand.
     public mutating func handlePlusMinus() {
+        // Negating a result as ×-1 keeps the formula exact, so that 1÷3= ± ×3= evaluates to -1.
+        if tokens.endsWithEqual {
+            tokens += [.operator(.multiplication), .operator(.subtraction), .operand(.init(digits: [.number(1)])), .operator(.equal)]
+            return
+        }
         guard case .operand = tokens.last else {
             return
         }
@@ -120,7 +134,7 @@ public struct CalculatorEngine {
             fatalError("Error: There are two or more consecutive operands.")
         case let .operator(value):
             switch tokens.dropLast(2).last {
-            case .operand: // operand operator operand
+            case .operand, .operator(.equal): // operand operator operand, or result operator operand
                 switch value {
                 case .addition:
                     tokens[tokens.count - 2] = .operator(.subtraction)
@@ -153,8 +167,12 @@ public struct CalculatorEngine {
     }
 
     mutating func handleCalculate() {
+        guard !tokens.endsWithEqual else {
+            return
+        }
         do {
-            tokens = try tokens.calculated()
+            _ = try tokens.calculated()
+            tokens.append(.operator(.equal))
             isEditingOperand = false
             error = nil
         } catch let error as CalculationError {
@@ -185,6 +203,7 @@ public struct CalculatorEngine {
 
     /// Handles the input of the clear button, removing the operand under editing.
     public mutating func handleClear() {
+        settleResult()
         if case .operand = tokens.last {
             tokens.removeLast()
         }
@@ -193,6 +212,7 @@ public struct CalculatorEngine {
 
     /// Handles the input of the delete button, removing the last digit or operator.
     public mutating func handleDelete() {
+        settleResult()
         switch tokens.last {
         case var .operand(value):
             value.digits.removeLast()
@@ -211,5 +231,17 @@ public struct CalculatorEngine {
         } else {
             false
         }
+    }
+
+    // Replaces a formula closed by the equal sign with its rounded result before an input edits the result itself.
+    private mutating func settleResult() {
+        guard tokens.endsWithEqual else {
+            return
+        }
+        // The engine closes a formula only after calculating it, so the calculation succeeds again.
+        guard let result = try? tokens.calculated() else {
+            fatalError("Error: A formula closed by the equal sign is not calculable.")
+        }
+        tokens = result
     }
 }

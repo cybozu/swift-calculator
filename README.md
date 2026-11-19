@@ -120,7 +120,7 @@ engine.handle(operator: .equal)
 engine.handle(operator: .addition)
 engine.handle(number: 1)
 engine.handle(operator: .equal)
-// engine.tokens now holds the calculated tokens.
+// engine.tokens now holds the whole formula "1+1=+1=", which calculates to 3.
 ```
 
 Then take the calculated result out of the tokens:

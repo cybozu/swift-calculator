@@ -13,7 +13,7 @@ public struct CalculatorFormatter: Sendable {
             return "0"
         }
         do {
-            let result = try tokens.isSettledValue ? tokens : tokens.calculated()
+            let result = try tokens.loneValue != nil ? tokens : tokens.calculated()
             return result.map(String.init(describing:)).joined()
         } catch {
             let calculationError = error as? CalculationError ?? .invalidFormula(.incompleteFormula)
@@ -22,11 +22,19 @@ public struct CalculatorFormatter: Sendable {
     }
 
     /// Returns a string that represents the given tokens as a formula.
+    /// A formula closed by an equal sign is represented by its result,
+    /// so `1÷3=×3` is formatted as `0.333…×3`.
     public func expression(from tokens: [Token]) -> String {
-        if tokens.isEmpty {
-            "0"
-        } else {
-            tokens.map(String.init(describing:)).joined()
+        guard !tokens.isEmpty else {
+            return "0"
         }
+        var displayed = tokens[...]
+        var prefix = [Token]()
+        if let index = tokens.lastIndex(of: .operator(.equal)),
+           let result = try? Array(tokens[...index]).calculated() {
+            prefix = result
+            displayed = tokens[(index + 1)...]
+        }
+        return (prefix + displayed).map(String.init(describing:)).joined()
     }
 }

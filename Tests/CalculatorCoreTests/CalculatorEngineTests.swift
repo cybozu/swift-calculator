@@ -1442,7 +1442,7 @@ struct CalculatorEngineTests {
         sut.tokens = .init("1×-1")
         sut.handleCalculate()
         #expect(!sut.isEditingOperand)
-        #expect(sut.tokens == .init("-1"))
+        #expect(sut.tokens == .init("1×-1="))
         #expect(sut.expression == "-1")
     }
 
@@ -1464,7 +1464,7 @@ struct CalculatorEngineTests {
         sut.tokens = .init("1+1")
         sut.handle(operator: .equal)
         #expect(!sut.isEditingOperand)
-        #expect(sut.tokens == .init("2"))
+        #expect(sut.tokens == .init("1+1="))
         #expect(sut.expression == "2")
     }
 
@@ -1517,7 +1517,7 @@ struct CalculatorEngineTests {
             ),
             expect: .init(
                 isEditingOperand: false,
-                tokens: .init("4")
+                tokens: .init("2+2=")
             )
         ),
         .init(

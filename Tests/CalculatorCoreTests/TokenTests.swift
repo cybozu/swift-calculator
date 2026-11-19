@@ -411,6 +411,14 @@ struct TokenTests {
             tokens: .init("1+1=+1"),
             expectedTokens: [.operand(.init(3))]
         ),
+        .init(
+            tokens: .init("1+2=×3"),
+            expectedTokens: [.operand(.init(9))]
+        ),
+        .init(
+            tokens: .init("1÷3=×3="),
+            expectedTokens: [.operand(.init(1))]
+        ),
     ] as [CalculatedCondition])
     func calculated_chained_expression(_ condition: CalculatedCondition) throws {
         let actual = try condition.tokens.calculated()

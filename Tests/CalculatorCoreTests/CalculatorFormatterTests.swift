@@ -62,7 +62,15 @@ struct CalculatorFormatterTests {
         ),
         .init(
             tokens: .init("1+1=+1="),
-            expectedString: "1+1=+1="
+            expectedString: "3"
+        ),
+        .init(
+            tokens: .init("1÷3=×3"),
+            expectedString: "0.333333333333333333333333333333×3"
+        ),
+        .init(
+            tokens: .init("1-3=×-2"),
+            expectedString: "-2×-2"
         ),
     ] as [StringCondition])
     func expression_from_tokens(_ condition: StringCondition) {

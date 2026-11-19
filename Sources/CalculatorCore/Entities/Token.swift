@@ -84,31 +84,46 @@ extension [Token] {
         return SignedOperand(value: -value, cost: 2)
     }
 
-    /// Whether the tokens represent a single already-calculated value,
-    /// such as an engine's stack right after the equal operator folded it.
+    /// Whether the tokens represent a settled value: a lone value,
+    /// or a formula closed by the equal operator, such as an engine's stack right after the equal input.
     public var isSettledValue: Bool {
+        loneValue != nil || endsWithEqual
+    }
+
+    /// The value of the tokens when they hold a lone value, such as `5` or `-5`.
+    var loneValue: Decimal? {
         if count == 1, case let .operand(operand) = self[0] {
-            return operand.decimalValue != nil
+            return operand.decimalValue
         }
         if count == 2, case .operator(.subtraction) = self[0],
            case let .operand(operand) = self[1] {
-            return operand.decimalValue != nil
+            return operand.decimalValue.map { -$0 }
         }
-        return false
+        return nil
+    }
+
+    var endsWithEqual: Bool {
+        last == .operator(.equal)
     }
 
     /// Returns the calculated result of the tokens as a decimal value.
-    /// A stack that already holds a single settled value is returned as is.
+    /// A lone value is returned as is.
     /// - Throws: A `CalculationError` when the tokens do not form a calculable formula.
     public func calculatedDecimalValue() throws -> Decimal {
-        let result = try isSettledValue ? self : calculated()
-        guard case let .operand(operand) = result.last,
-              let value = operand.decimalValue else {
+        if let loneValue {
+            return loneValue
+        }
+        guard let value = try calculated().loneValue else {
             throw CalculationError.invalidFormula(.incompleteFormula)
         }
-        return result.count == 2 ? -value : value
+        return value
     }
 
+    /// Returns the calculated result of the tokens as a lone value.
+    ///
+    /// A formula continued after an equal sign takes the result before it as its first operand,
+    /// so `1÷3=×3` is calculated as `(1÷3)×3`.
+    /// Only the final result is rounded, and the results before the equal signs keep their full precision.
     func calculated() throws -> [Token] {
         guard !isEmpty else {
             throw CalculationError.invalidFormula(.incompleteFormula)
@@ -131,10 +146,10 @@ extension [Token] {
             }
             result = try formula.calculatedFormula()
         }
-        guard let result else {
+        guard let value = result?.loneValue else {
             throw CalculationError.invalidFormula(.incompleteFormula)
         }
-        return result
+        return [Token](decimalValue: value.roundingValue())
     }
 
     private func calculatedFormula() throws -> [Token] {
@@ -197,16 +212,10 @@ extension [Token] {
             }
         }
 
-        let value: Decimal
-        if copy.count == 1, case let .operand(operand) = copy.first, let decimalValue = operand.decimalValue {
-            value = decimalValue
-        } else if copy.count == 2, case .operator(.subtraction) = copy.first,
-                  case let .operand(operand) = copy.last, let decimalValue = operand.decimalValue {
-            value = -decimalValue
-        } else {
+        guard let value = copy.loneValue else {
             throw CalculationError.invalidFormula(.incompleteFormula)
         }
-        return [Token](decimalValue: value.roundingValue())
+        return [Token](decimalValue: value)
     }
 }
 

@@ -228,6 +228,22 @@ struct CalculatorStateTests {
     }
 
     @Test
+    func continuing_a_result_calculates_the_whole_formula() {
+        let sut = CalculatorState()
+        for role: Role in [.number(1), .operator(.division), .number(3), .operator(.equal)] {
+            sut.onTap(role)
+        }
+        #expect(sut.expression == "0.333333333333333333333333333333")
+        for role: Role in [.operator(.multiplication), .number(3)] {
+            sut.onTap(role)
+        }
+        #expect(sut.expression == "0.333333333333333333333333333333×3")
+        sut.onTap(.operator(.equal))
+        #expect(sut.expression == "1")
+        #expect(sut.value == 1)
+    }
+
+    @Test
     func delete_after_settled_result_continues_editing() {
         let sut = CalculatorState()
         sut.onTap(.number(6))
