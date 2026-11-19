@@ -197,13 +197,16 @@ extension [Token] {
             }
         }
 
-        if copy.count == 1, case let .operand(value) = copy.first {
-            return [.operand(.init(digits: value.digits))]
-        } else if copy.count == 2, case .operator(.subtraction) = copy.first, case let .operand(value) = copy.last {
-            return [.operator(.subtraction), .operand(.init(digits: value.digits))]
+        let value: Decimal
+        if copy.count == 1, case let .operand(operand) = copy.first, let decimalValue = operand.decimalValue {
+            value = decimalValue
+        } else if copy.count == 2, case .operator(.subtraction) = copy.first,
+                  case let .operand(operand) = copy.last, let decimalValue = operand.decimalValue {
+            value = -decimalValue
         } else {
             throw CalculationError.invalidFormula(.incompleteFormula)
         }
+        return [Token](decimalValue: value.roundingValue())
     }
 }
 

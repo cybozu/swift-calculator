@@ -281,7 +281,7 @@ struct TokenTests {
     @Test(arguments: [
         .init(
             tokens: .init("8÷3%2"),
-            expectedTokens: [.operand(.init(0.6666667))]
+            expectedTokens: [.operand(.init(decimalValue: Decimal(string: "0.666666666666666666666666666667")!))]
         ),
         .init(
             tokens: .init("2×7%4"),
@@ -346,7 +346,27 @@ struct TokenTests {
         ),
         .init(
             tokens: .init("1÷3"),
-            expectedTokens: [.operand(.init(0.3333333))]
+            expectedTokens: [.operand(.init(decimalValue: Decimal(string: "0.333333333333333333333333333333")!))]
+        ),
+        .init(
+            tokens: .init("1÷100000000"),
+            expectedTokens: [.operand(.init(decimalValue: Decimal(string: "0.00000001")!))]
+        ),
+        .init(
+            tokens: .init("10000000000÷3×3"),
+            expectedTokens: [.operand(.init(10000000000))]
+        ),
+        .init(
+            tokens: .init("1÷3×3"),
+            expectedTokens: [.operand(.init(1))]
+        ),
+        .init(
+            tokens: .init("2÷3×3"),
+            expectedTokens: [.operand(.init(2))]
+        ),
+        .init(
+            tokens: .init("1÷3+1÷3+1÷3"),
+            expectedTokens: [.operand(.init(1))]
         ),
         .init(
             tokens: .init("0.3%0.1"),
