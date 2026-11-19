@@ -27,7 +27,7 @@ jobs:
         shell: bash
         run: |
           xcodebuild docbuild \
-            -scheme swift-calculator \
+            -scheme swift-calculator-Package \
             -destination "generic/platform=iOS" \
             -derivedDataPath DerivedData | \
             xcbeautify
